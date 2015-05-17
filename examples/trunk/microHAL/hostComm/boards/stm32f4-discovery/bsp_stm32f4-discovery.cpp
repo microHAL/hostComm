@@ -25,8 +25,8 @@ void hardwareConfig(void) {
     Core::pll_start(8000000, 168000000);
     Core::fpu_enable();
 
-    IOMenager::routeSerial<3, Txd, stm32f4xx::GPIO::PortD, 8>();
-    IOMenager::routeSerial<3, Rxd, stm32f4xx::GPIO::PortD, 9>();
+    IOManager::routeSerial<3, Txd, stm32f4xx::GPIO::PortD, 8>();
+    IOManager::routeSerial<3, Rxd, stm32f4xx::GPIO::PortD, 9>();
 
     xTaskHandle mainHandle;
     xTaskCreate(main, (const signed char* )"main", (3*1024), 0, tskIDLE_PRIORITY, &mainHandle);
