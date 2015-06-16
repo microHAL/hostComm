@@ -17,11 +17,11 @@ namespace microhal {
 
 class HostCommPacket_ACK: public HostCommPacket {
 public:
-	static HostCommPacket_ACK & getInstance() {
-		static HostCommPacket_ACK packet;
-
-		return packet;
-	}
+//	static HostCommPacket_ACK & getInstance() {
+//		static HostCommPacket_ACK packet;
+//
+//		return packet;
+//	}
 
 	void setPacketToACK(HostCommPacket &packet){
 		HostCommPacket::packetInfo *ACKinfo = reinterpret_cast<HostCommPacket::packetInfo*>(&this->packet->data);
@@ -39,11 +39,11 @@ public:
 
 	void log(){
 		HostCommPacket::packetInfo *ACKinfo = reinterpret_cast<HostCommPacket::packetInfo*>(&this->packet->data);
-		diagChannel << Debug << "control: " << ACKinfo->control << endl
-								<< "type: " << ACKinfo->type << endl
-								<< "size: " << ACKinfo->size << endl;
+		diagnostic::diagChannel << diagnostic::Debug << "control: " << ACKinfo->control << diagnostic::endl
+								<< "type: " << ACKinfo->type << diagnostic::endl
+								<< "size: " << ACKinfo->size << diagnostic::endl;
 	}
-private:
+
 	HostCommPacket_ACK() :
 			HostCommPacket(sizeof(HostCommPacket::packetInfo), HostCommPacket::ACK, false, false) {
 	}

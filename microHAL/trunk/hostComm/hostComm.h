@@ -9,84 +9,38 @@
 #define HOSTCOMM_H_
 
 #include <stdint.h>
-#include "signalSlot.h"
+#include "signalSlot/signalSlot.h"
 #include "hostCommPacket.h"
 #include "hostCommPacketping.h"
 #include "IODevice.h"
 #include "../diagnostic/diagnostic.h"
+#include <mutex>
+#include "semaphore.h"
+
 
 namespace microhal {
 
 class HostComm {
 public:
-	HostComm(IODevice &ioDevice) :
-			ioDevice(ioDevice), receivedPacket(packetBuffer) {
-
+	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
+			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer) {
 	}
+
+	bool send(HostCommPacket &packet);
 
 	void timeProc();
 
-	void enable() {
-
+	template<typename _Rep, typename _Period>
+	void setACKtimeout(const std::chrono::duration<_Rep, _Period>& timeout) {
+		ackTimeout = timeout;
 	}
 
-	void disable() {
-
+	void setMaxRetransmissionCount(uint8_t retransmission) {
+		maxRetransmissionTry = retransmission;
 	}
 
-	bool waitForACK(HostCommPacket &packetToACK) {
-		volatile uint32_t timeout = 300000;
-		while (txPendingPacket != nullptr) {
-			timeProc();
-			if (timeout-- == 0) {
-				return false;
-			}
-		}
-		return true;
-	}
 
-	void setMaxRetransmissionCount(uint8_t retransmissionCount) {
-
-	}
-
-	bool send(HostCommPacket &packet) {
-		//count up from 0 to 15
-		sentCounter = (sentCounter + 1) & 0x0F;
-		//
-		packet.setNumber(sentCounter);
-		packet.calculateCRC();
-
-		ioDevice.write((char*)packet.packet, packet.getSize() + sizeof(HostCommPacket::packetInfo));
-
-		if (packet.requireACK()) {
-			txPendingPacket = &packet;
-			for (uint16_t retransmission = 0; retransmission < 3;
-					retransmission++) {
-				if (waitForACK(packet)) {
-					return true;
-				}
-				ioDevice.write((char*)packet.packet, packet.getSize() + sizeof(HostCommPacket::packetInfo));
-			}
-			//unable to deliver packet
-			return false;
-		}
-		return true;
-	}
-
-	bool ping(bool waitForResponse) {
-		bool status = send(pingPacket);
-		if (waitForResponse == true) {
-			volatile uint32_t timeout = 300000;
-			while (txPendingPacket != nullptr) {
-				timeProc();
-				if (timeout-- == 0) {
-					status = false;
-				}
-			}
-		}
-		return status;
-	}
-
+	bool ping(bool waitForResponse);
 	bool isAvailablePacket();
 
 	bool getPendingPacket(HostCommPacket *packet) {
@@ -95,21 +49,36 @@ public:
 
 	Signal<HostCommPacket &> incommingPacket;
 private:
-	uint8_t sentCounter = 0;
-	uint8_t receiveCounter = 0;
+	semaphore ackSemaphore;
+
+	std::mutex sendMutex;
+	std::chrono::milliseconds ackTimeout = {std::chrono::milliseconds{1000}};
+	uint8_t sentCounter = 0; //this counter contain last number of sent frame. This counter is increased when sending new frame but now when retransmitting frame.
+	uint8_t receiveCounter = 0; //this counter contain last number of received frame, is used to detect receive of retransmitted frame.
+	uint8_t maxRetransmissionTry = 3;
 	IODevice &ioDevice;
+	diagnostic::Diagnostic &log;
+
+	struct {
+		uint32_t sentPacketCounter = 0;
+		uint32_t receivedPacketCounter = 0;
+	} statistics;
 
 	uint8_t packetBuffer[200];
 	HostCommPacket receivedPacket;
 	HostCommPacket *txPendingPacket = nullptr;
 
 	//static packets
+	static HostCommPacket_ACK ACKpacket;
 	static HostCommPacket pingPacket;
 	static HostCommPacket pongPacket;
+
+	bool sentPacktToIODevice(HostCommPacket &packet);
+	bool waitForACK(HostCommPacket &packetToACK);
 
 	bool readPacket();
 };
 
-} /* namespace microhal */
+} // namespace microhal
 
 #endif /* HOSTCOMM_H_ */
