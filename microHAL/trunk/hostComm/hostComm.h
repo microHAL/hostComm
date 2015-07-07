@@ -11,11 +11,11 @@
 #include <stdint.h>
 #include "signalSlot/signalSlot.h"
 #include "hostCommPacket.h"
-#include "hostCommPacketping.h"
+#include "hostCommPacketACK.h"
 #include "IODevice.h"
 #include "../diagnostic/diagnostic.h"
 #include <mutex>
-#include "semaphore.h"
+#include "microhal_semaphore.h"
 
 
 namespace microhal {
@@ -23,7 +23,7 @@ namespace microhal {
 class HostComm {
 public:
 	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
-			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer) {
+			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
 	}
 
 	bool send(HostCommPacket &packet);
@@ -69,7 +69,7 @@ private:
 	HostCommPacket *txPendingPacket = nullptr;
 
 	//static packets
-	static HostCommPacket_ACK ACKpacket;
+	HostCommPacket_ACK ACKpacket;
 	static HostCommPacket pingPacket;
 	static HostCommPacket pongPacket;
 
