@@ -18,17 +18,17 @@ namespace microhal {
 class HostCommPacket_ACK : public HostCommDataPacket < HostCommPacket::PacketInfo, HostCommPacket::ACK> {
 public:
 	void setPacketToACK(HostCommPacket &packet){
-		data() = packet.packetInfo;
+		payload() = packet.packetInfo;
 	}
 
 	bool isAcknowledged(HostCommPacket &packet) const noexcept {
-		if(packet.packetInfo != data()) return false;
+		if(packet.packetInfo != payload()) return false;
 
 		return true;
 	}
 
 	void log() const noexcept {
-		HostCommPacket::PacketInfo *ACKinfo = getDataPtr();
+		HostCommPacket::PacketInfo *ACKinfo = payloadPtr();
 		diagnostic::diagChannel << diagnostic::Debug << "control: " << ACKinfo->control << diagnostic::endl
 								<< "type: " << ACKinfo->type << diagnostic::endl
 								<< "size: " << ACKinfo->size << diagnostic::endl;
