@@ -54,6 +54,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.1173538951" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F407xx"/>
@@ -71,6 +72,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.171289707" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F407xx"/>
@@ -87,6 +89,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1268656193" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.291388669" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -98,6 +101,7 @@
 									<listOptionValue builtIn="false" value="STM32F40_41xxx"/>
 									<listOptionValue builtIn="false" value="__MICROHAL__"/>
 								</option>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.std.1746094008" name="Language standard" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.std" useByScannerDiscovery="true" value="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.std.cpp1y" valueType="enumerated"/>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1511267648" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker.639180886" name="Cross ARM C Linker" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker">
@@ -143,8 +147,8 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="boards|microHAL" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="boards"/>
-						<entry excluding="os/FreeRTOS/portable/GCC/TriCore_1782|os/FreeRTOS/portable/GCC/STR75x|os/FreeRTOS/portable/GCC/RX600|os/FreeRTOS/portable/GCC/RX100|os/FreeRTOS/portable/GCC/PPC440_Xilinx|os/FreeRTOS/portable/GCC/PPC405_Xilinx|os/FreeRTOS/portable/GCC/NiosII|os/FreeRTOS/portable/GCC/MSP430F449|os/FreeRTOS/portable/GCC/MicroBlazeV8|os/FreeRTOS/portable/GCC/MicroBlaze|os/FreeRTOS/portable/GCC/MCF5235|os/FreeRTOS/portable/GCC/HCS12|os/FreeRTOS/portable/GCC/H8S2329|os/FreeRTOS/portable/GCC/CORTUS_APS3|os/FreeRTOS/portable/GCC/ColdFire_V2|os/FreeRTOS/portable/GCC/AVR32_UC3|os/FreeRTOS/portable/GCC/ATMega323|os/FreeRTOS/portable/GCC/ARM7_LPC23xx|os/FreeRTOS/portable/GCC/ARM7_LPC2000|os/FreeRTOS/portable/GCC/ARM7_AT91SAM7S|os/FreeRTOS/portable/GCC/ARM7_AT91FR40008|os/FreeRTOS/portable/GCC/ARM_CM3_MPU|os/FreeRTOS/portable/GCC/ARM_CM3|os/FreeRTOS/portable/GCC/ARM_CM0|os/FreeRTOS/portable/WizC|os/FreeRTOS/portable/Tasking|os/FreeRTOS/portable/Softune|os/FreeRTOS/portable/SDCC|os/FreeRTOS/portable/RVDS|os/FreeRTOS/portable/Rowley|os/FreeRTOS/portable/Renesas|os/FreeRTOS/portable/Paradigm|os/FreeRTOS/portable/oWatcom|os/FreeRTOS/portable/MSVC-MingW|os/FreeRTOS/portable/MPLAB|os/FreeRTOS/portable/Keil|os/FreeRTOS/portable/IAR|os/FreeRTOS/portable/CodeWarrior|os/FreeRTOS/portable/CCS|os/FreeRTOS/portable/BCC|ports/STMicroelectronics/STM32F4xx/usb_stm32f4xx.cpp|ports/STMicroelectronics/STM32F4xx/timer_stm32f4xx.cpp|ports/STMicroelectronics/STM32F4xx/adc_stm32f4xx.cpp|ports/STMicroelectronics/STM32F0xx|ports/Windows|ports/templatePort|ports/ SiliconLabs|ports/Renesas|ports/Linux|ports/helpers|ports/Atmel|os/thread.cc|os/noRTOSport|usb|SPIDevice|nano|math|info|I2CDevice|html|DSP|cli|button" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="microHAL"/>
+						<entry excluding="Windows" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="boards"/>
+						<entry excluding="os/FreeRTOS/portable/MemMang/heap_5.c|os/FreeRTOS/portable/MemMang/heap_4.c|os/FreeRTOS/portable/MemMang/heap_3.c|os/FreeRTOS/portable/MemMang/heap_1.c|os/FreeRTOS_port/c++11/mutex.cc|os/FreeRTOS_port/c++11/chrono.cc|os/thread.cc|os/FreeRTOS_port/c++11/future.cc|os/FreeRTOS_port/c++11/condition_variable.cc|boost|os/FreeRTOS/portable/GCC/TriCore_1782|os/FreeRTOS/portable/GCC/STR75x|os/FreeRTOS/portable/GCC/RX600|os/FreeRTOS/portable/GCC/RX100|os/FreeRTOS/portable/GCC/PPC440_Xilinx|os/FreeRTOS/portable/GCC/PPC405_Xilinx|os/FreeRTOS/portable/GCC/NiosII|os/FreeRTOS/portable/GCC/MSP430F449|os/FreeRTOS/portable/GCC/MicroBlazeV8|os/FreeRTOS/portable/GCC/MicroBlaze|os/FreeRTOS/portable/GCC/MCF5235|os/FreeRTOS/portable/GCC/HCS12|os/FreeRTOS/portable/GCC/H8S2329|os/FreeRTOS/portable/GCC/CORTUS_APS3|os/FreeRTOS/portable/GCC/ColdFire_V2|os/FreeRTOS/portable/GCC/AVR32_UC3|os/FreeRTOS/portable/GCC/ATMega323|os/FreeRTOS/portable/GCC/ARM7_LPC23xx|os/FreeRTOS/portable/GCC/ARM7_LPC2000|os/FreeRTOS/portable/GCC/ARM7_AT91SAM7S|os/FreeRTOS/portable/GCC/ARM7_AT91FR40008|os/FreeRTOS/portable/GCC/ARM_CM3_MPU|os/FreeRTOS/portable/GCC/ARM_CM3|os/FreeRTOS/portable/GCC/ARM_CM0|os/FreeRTOS/portable/WizC|os/FreeRTOS/portable/Tasking|os/FreeRTOS/portable/Softune|os/FreeRTOS/portable/SDCC|os/FreeRTOS/portable/RVDS|os/FreeRTOS/portable/Rowley|os/FreeRTOS/portable/Renesas|os/FreeRTOS/portable/Paradigm|os/FreeRTOS/portable/oWatcom|os/FreeRTOS/portable/MSVC-MingW|os/FreeRTOS/portable/MPLAB|os/FreeRTOS/portable/Keil|os/FreeRTOS/portable/IAR|os/FreeRTOS/portable/CodeWarrior|os/FreeRTOS/portable/CCS|os/FreeRTOS/portable/BCC|ports/STMicroelectronics/STM32F4xx/usb_stm32f4xx.cpp|ports/STMicroelectronics/STM32F4xx/timer_stm32f4xx.cpp|ports/STMicroelectronics/STM32F4xx/adc_stm32f4xx.cpp|ports/STMicroelectronics/STM32F0xx|ports/Windows|ports/templatePort|ports/ SiliconLabs|ports/Renesas|ports/Linux|ports/helpers|ports/Atmel|os/noRTOSport|usb|SPIDevice|nano|math|info|I2CDevice|html|DSP|cli|button" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="microHAL"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -206,6 +210,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.938226646" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F407xx"/>
@@ -228,6 +233,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.31399118" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F407xx"/>
@@ -249,6 +255,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/common/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os/FreeRTOS/portable/GCC/ARM_CM4F}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.80304493" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.2104358992" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -308,9 +315,88 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="microHAL/os/FreeRTOS/portable/MemMang"/>
+						<entry excluding="heap_5.c|heap_4.c|heap_3.c|heap_1.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="microHAL/os/FreeRTOS/portable/MemMang"/>
+						<entry excluding="mutex.cc|chrono.cc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="microHAL/os/FreeRTOS_port/c++11"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry excluding="src/stm32f4-hal/stm32f4xx_hal_adc.c|src/stm32f4-hal/stm32f4xx_hal_adc_ex.c|src/stm32f4-hal/stm32f4xx_hal_can.c|src/stm32f4-hal/stm32f4xx_hal_crc.c|src/stm32f4-hal/stm32f4xx_hal_cryp.c|src/stm32f4-hal/stm32f4xx_hal_cryp_ex.c|src/stm32f4-hal/stm32f4xx_hal_dac.c|src/stm32f4-hal/stm32f4xx_hal_dac_ex.c|src/stm32f4-hal/stm32f4xx_hal_dcmi.c|src/stm32f4-hal/stm32f4xx_hal_dma.c|src/stm32f4-hal/stm32f4xx_hal_dma2d.c|src/stm32f4-hal/stm32f4xx_hal_dma_ex.c|src/stm32f4-hal/stm32f4xx_hal_eth.c|src/stm32f4-hal/stm32f4xx_hal_hash.c|src/stm32f4-hal/stm32f4xx_hal_hash_ex.c|src/stm32f4-hal/stm32f4xx_hal_hcd.c|src/stm32f4-hal/stm32f4xx_hal_i2c.c|src/stm32f4-hal/stm32f4xx_hal_i2c_ex.c|src/stm32f4-hal/stm32f4xx_hal_i2s.c|src/stm32f4-hal/stm32f4xx_hal_i2s_ex.c|src/stm32f4-hal/stm32f4xx_hal_irda.c|src/stm32f4-hal/stm32f4xx_hal_ltdc.c|src/stm32f4-hal/stm32f4xx_hal_msp_template.c|src/stm32f4-hal/stm32f4xx_hal_nand.c|src/stm32f4-hal/stm32f4xx_hal_nor.c|src/stm32f4-hal/stm32f4xx_hal_pccard.c|src/stm32f4-hal/stm32f4xx_hal_pcd.c|src/stm32f4-hal/stm32f4xx_hal_rng.c|src/stm32f4-hal/stm32f4xx_hal_rtc.c|src/stm32f4-hal/stm32f4xx_hal_rtc_ex.c|src/stm32f4-hal/stm32f4xx_hal_sai.c|src/stm32f4-hal/stm32f4xx_hal_sd.c|src/stm32f4-hal/stm32f4xx_hal_sdram.c|src/stm32f4-hal/stm32f4xx_hal_smartcard.c|src/stm32f4-hal/stm32f4xx_hal_spi.c|src/stm32f4-hal/stm32f4xx_hal_sram.c|src/stm32f4-hal/stm32f4xx_hal_tim.c|src/stm32f4-hal/stm32f4xx_hal_tim_ex.c|src/stm32f4-hal/stm32f4xx_hal_uart.c|src/stm32f4-hal/stm32f4xx_hal_usart.c|src/stm32f4-hal/stm32f4xx_hal_wwdg.c|src/stm32f4-hal/stm32f4xx_ll_fmc.c|src/stm32f4-hal/stm32f4xx_ll_fsmc.c|src/stm32f4-hal/stm32f4xx_ll_sdmmc.c|src/stm32f4-hal/stm32f4xx_ll_usb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="cdt.managedbuild.config.gnu.cross.exe.debug.746156717">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.exe.debug.746156717" moduleId="org.eclipse.cdt.core.settings" name="PC">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.debug.746156717" name="PC" parent="cdt.managedbuild.config.gnu.cross.exe.debug">
+					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.746156717." name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.debug.2070044572" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.955255444" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/hostComm}/PC" id="cdt.managedbuild.builder.gnu.cross.560498031" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool commandLinePattern="${COMMAND} $(MICROHAL_CONFIGURATION_DEFINES) ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cross.c.compiler.1666086244" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.58198429" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.561046777" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.include.paths.725274367" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/Windows/General}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/boards/Windows}&quot;"/>
+								</option>
+								<option id="gnu.c.compiler.option.misc.other.65524120" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 " valueType="string"/>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.499175419" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="WINDOWS_PORT"/>
+									<listOptionValue builtIn="false" value="LOG_LEVEL=Debug"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1299578810" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool commandLinePattern="${COMMAND} $(MICROHAL_CONFIGURATION_DEFINES) ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.90416345" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+								<option id="gnu.cpp.compiler.option.optimization.level.684244188" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.1826536067" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.508710035" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.include.paths.1867615535" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/Windows/General}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/boards/Windows}&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.other.verbose.1724091823" name="Verbose (-v)" superClass="gnu.cpp.compiler.option.other.verbose" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.other.other.848738473" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1609197519" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="WINDOWS_PORT"/>
+									<listOptionValue builtIn="false" value="LOG_LEVEL=Debug"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1566218438" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1668188290" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1036082062" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1908359957" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1808068239" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.722552148" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<option id="gnu.both.asm.option.include.paths.1891436452" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/os}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/microHAL/ports/Windows/General}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/hostComm/boards/Windows}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1113316734" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="microHAL/DSP|microHAL/button|microHAL/os/FreeRTOS/timers.c|microHAL/os/FreeRTOS/tasks.c|microHAL/os/FreeRTOS/queue.c|microHAL/os/FreeRTOS/list.c|microHAL/os/FreeRTOS/event_groups.c|microHAL/os/FreeRTOS/croutine.c|microHAL/os/FreeRTOS/portable/GCC|microHAL/os/FreeRTOS_port/osHelper.cpp|microHAL/os/FreeRTOS_port/freeRTOS_port.cpp|microHAL/os/FreeRTOS/portable/MemMang|microHAL/os/FreeRTOS_port/c++11|microHAL/os/noRTOSport|microHAL/os/thread.cc|microHAL/info|microHAL/ports/STMicroelectronics|microHAL/ports/common|microHAL/SPIDevice|microHAL/nano|microHAL/math|microHAL/I2CDevice|microHAL/boost|microHAL/usb|microHAL/ports/templatePort|microHAL/ports/ SiliconLabs|microHAL/ports/Renesas|microHAL/ports/Linux|microHAL/ports/helpers|microHAL/ports/Atmel|boards/stm32f4-discovery" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -320,6 +406,18 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="hostComm.ilg.gnuarmeclipse.managedbuild.cross.target.elf.240589475" name="Executable" projectType="ilg.gnuarmeclipse.managedbuild.cross.target.elf"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="PC"/>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/hostComm"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/hostComm"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.421381657;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.421381657.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.274208627;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.90516034">
@@ -328,15 +426,17 @@
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1564799431;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1564799431.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.4097948;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.359140383">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.746156717;cdt.managedbuild.config.gnu.cross.exe.debug.746156717.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.90416345;cdt.managedbuild.tool.gnu.cpp.compiler.input.1566218438">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1564799431;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1564799431.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1072442240;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1511267648">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.421381657;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.421381657.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.410998885;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.757525945">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.746156717;cdt.managedbuild.config.gnu.cross.exe.debug.746156717.;cdt.managedbuild.tool.gnu.cross.c.compiler.1666086244;cdt.managedbuild.tool.gnu.c.compiler.input.1299578810">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="refreshScope"/>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

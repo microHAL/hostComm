@@ -14,18 +14,14 @@
 #ifndef STM32F4DISCOVERY_H_
 #define STM32F4DISCOVERY_H_
 
-#include "i2c.h"
+static microhal::SerialPort &debugPort = microhal::stm32f4xx::SerialPort::Serial1;
 
-static microhal::SerialPort &debugPort = microhal::stm32f4xx::SerialPort::Serial3;
+constexpr microhal::GPIO::IOPin Led3(microhal::stm32f4xx::GPIO::Port::PortD, 13);
+constexpr microhal::GPIO::IOPin Led4(microhal::stm32f4xx::GPIO::Port::PortD, 12);
+constexpr microhal::GPIO::IOPin Led5(microhal::stm32f4xx::GPIO::Port::PortD, 14);
+constexpr microhal::GPIO::IOPin Led6(microhal::stm32f4xx::GPIO::Port::PortD, 15);
 
-static microhal::I2C &sensorI2C = microhal::stm32f4xx::I2C::i2c2;
-
-constexpr microhal::GPIO::IOPin Led3(microhal::GPIO::Port::PortD, 13);
-constexpr microhal::GPIO::IOPin Led4(microhal::GPIO::Port::PortD, 12);
-constexpr microhal::GPIO::IOPin Led5(microhal::GPIO::Port::PortD, 14);
-constexpr microhal::GPIO::IOPin Led6(microhal::GPIO::Port::PortD, 15);
-
-constexpr microhal::GPIO::IOPin Sw1(microhal::GPIO::Port::PortA, 0);
+constexpr microhal::GPIO::IOPin Sw1(microhal::stm32f4xx::GPIO::Port::PortA, 0);
 
 constexpr microhal::GPIO::IOPin GreenLed = Led4;
 constexpr microhal::GPIO::IOPin RedLed = Led3;

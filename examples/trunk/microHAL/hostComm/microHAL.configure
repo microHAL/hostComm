@@ -9,8 +9,8 @@ MCU_TYPE = STM32F4XX
 PROGRAMMER = BOARD_EMBEDED
 
 DEVICES = 
-BSP_BOARD = STM32F4-DISCOVERY
-MICRO_HAL_OS = 
+#BSP_BOARD = STM32F4-DISCOVERY
+MICRO_HAL_OS = FreeRTOS
 
 #=============================================================================#
 # diagnostics configuration
