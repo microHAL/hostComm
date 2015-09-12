@@ -16,6 +16,8 @@
 
 static microhal::SerialPort &debugPort = microhal::stm32f4xx::SerialPort::Serial1;
 
+static microhal::SerialPort &communicationPort = microhal::stm32f4xx::SerialPort::Serial2;
+
 constexpr microhal::GPIO::IOPin Led3(microhal::stm32f4xx::GPIO::Port::PortD, 13);
 constexpr microhal::GPIO::IOPin Led4(microhal::stm32f4xx::GPIO::Port::PortD, 12);
 constexpr microhal::GPIO::IOPin Led5(microhal::stm32f4xx::GPIO::Port::PortD, 14);
