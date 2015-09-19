@@ -2,13 +2,13 @@
  @license    BSD 3-Clause
  @copyright  microHAL
  @version    $Id$
- @brief      hostComm unit test
+ @brief      hostComm performance test, connection speed calculation time
 
  @authors    Pawel Okas
- created on: 14-09-2015
+ created on: 19-09-2015
  last modification: <DD-MM-YYYY>
 
- @copyright Copyright (c) 2015, microHAL
+ @copyright Copyright (c) 2014, microHAL
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
  conditions are met:
@@ -27,111 +27,135 @@
  *//* ========================================================================================================================== */
 
 #include "microhal.h"
+#include "diagnostic/TicToc.h"
 #include "hostComm/hostComm.h"
-#include "diagnostic/diagnostic.h"
+
 #include "microhal_bsp.h"
 
 #include "ut_common.h"
+#include "testPacket.h"
 
 #include <thread>
+#include <atomic>
 
 #include "catch.hpp"
-#include "testPacket.h"
 
 
 using namespace microhal;
 using namespace diagnostic;
 using namespace std::chrono_literals;
 
+template<typename _Rep, typename _Period>
+uint32_t calculateSpeed(size_t size, const std::chrono::duration<_Rep, _Period>& sendTime) {
+	std::chrono::microseconds time = std::chrono::duration_cast<std::chrono::microseconds>(sendTime);
+	float byteSpeed = static_cast<float>(size) * (1000000.0f / time.count());
 
-static void proceedPacket(HostCommPacket &packet) {
-	diagChannel << lock << Debug << "Received packet, type = " << toHex(packet.getType()) << endl << unlock;
+	diagChannel << lock << diagnostic::Informational << "Average connection speed = " << byteSpeed << "B/s" << endl << unlock;
+
+	return static_cast<uint32_t>(byteSpeed);
 }
 
-TEST_CASE ("Packet sending", "[packet sending]") {
-	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
-	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
-
+TEST_CASE ("Connection speed test") {
 	enum {
 		PacketType = 100
 	};
 
+	//create hostComm device
+	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
+	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
+
 	INFO ( "Starting timeProc thread.");
 
 	volatile bool run = true;
+
 	//create and run hostComm proc task
 	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-	std::thread hostCommThreadB (procThread, &hostCommB, &run);
-
-	INFO ( "Connecting incomming packet slot.");
-	//connect function that will be called when new packet will be received
-	hostCommB.incommingPacket.connect(proceedPacket);
+	std::thread hostCommThreadB(procThread, &hostCommB, &run);
 
 	REQUIRE(hostCommA.ping(true));
 	REQUIRE(hostCommB.ping(true));
 
-	SECTION("Sending no ACK packet")
-	{
-		HostCommPacket packet(PacketType, false);
+	constexpr int reapeat = 10;
+	std::chrono::microseconds responseTime[reapeat];
 
-		CHECK (hostCommA.send(packet));
-	}
+	diagnostic::TicToc duration;
+	duration.callibrate();
 
-	SECTION("Sending ACK packet")
+	SECTION("Sending no data packet")
 	{
 		HostCommPacket packet(PacketType, true);
 
-		CHECK (hostCommA.send(packet));
-	}
-
-	SECTION("Sending no ACK packet with data")
-	{
-		testPacket_noACK packet;
-		packet.payload().setCounter(0xCCDDEEFF);
-
-		uint32_t i = 2;
-		while (i--) {
+		for(uint8_t i=0; i<reapeat; i++) {
+			duration.tic();
 			CHECK (hostCommA.send(packet));
+			duration.toc();
+
+			responseTime[i] = duration.getDuration();
 		}
+
+		std::chrono::microseconds average = {};
+
+		for (const std::chrono::microseconds &response : responseTime) {
+			average += response;
+			diagChannel << lock << diagnostic::Informational << "No data packet response time = " << response.count() << "us" << endl << unlock;
+		}
+
+		average /= reapeat;
+
+		calculateSpeed(sizeof(packet), average);
 	}
 
-	SECTION("Sending ACK packet with data")
+	SECTION("Sending no CRC calculation data packet")
 	{
 		testPacket_ACK packet;
-		packet.payload().setCounter(0xAABBCCDD);
 
-		uint32_t i = 2;
-		while (i--) {
-			INFO ( "Sending packet");
+		for(uint8_t i=0; i<reapeat; i++) {
+			duration.tic();
 			CHECK (hostCommA.send(packet));
+			duration.toc();
+
+			responseTime[i] = duration.getDuration();
 		}
+
+		std::chrono::microseconds average = {};
+
+		for (const std::chrono::microseconds &response : responseTime) {
+			average += response;
+			diagChannel << lock << diagnostic::Informational << "Data packet response time = " << response.count() << "us" << endl << unlock;
+		}
+
+		average /= reapeat;
+
+		calculateSpeed(packet.getSize(), average);
 	}
 
-	SECTION("Sending no ACK packet with data CRC check")
-	{
-		testPacket_noACK_CRC packet;
-		packet.payload().setCounter(0xCCDDEEFF);
-
-		uint32_t i = 2;
-		while (i--) {
-			CHECK (hostCommA.send(packet));
-		}
-	}
-
-	SECTION("Sending ACK packet with data CRC check")
+	SECTION("Sending CRC calculation data packet")
 	{
 		testPacket_ACK_CRC packet;
-		packet.payload().setCounter(0xAABBCCDD);
 
-		uint32_t i = 2;
-		while (i--) {
-			INFO ( "Sending packet");
+		for(uint8_t i=0; i<reapeat; i++) {
+			duration.tic();
 			CHECK (hostCommA.send(packet));
+			duration.toc();
+
+			responseTime[i] = duration.getDuration();
 		}
+
+		std::chrono::microseconds average = {};
+
+		for (const std::chrono::microseconds &response : responseTime) {
+			average += response;
+			diagChannel << lock << diagnostic::Debug << "Data packet with CRC response time = " << response.count() << "us" << endl << unlock;
+		}
+
+		average /= reapeat;
+
+		calculateSpeed(packet.getSize(), average);
 	}
 
-	INFO ( "End of test, join proc thread.");
+	// close hostComm proc thread
 	run = false;
 	hostCommThreadA.join();
 	hostCommThreadB.join();
 }
+

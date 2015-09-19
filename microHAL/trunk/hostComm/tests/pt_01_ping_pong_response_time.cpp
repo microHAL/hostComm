@@ -2,10 +2,10 @@
  @license    BSD 3-Clause
  @copyright  microHAL
  @version    $Id$
- @brief      hostComm unit test, ping pong test
+ @brief      hostComm performance test, ping pong response time
 
  @authors    Pawel Okas
- created on: 14-09-2015
+ created on: 19-09-2015
  last modification: <DD-MM-YYYY>
 
  @copyright Copyright (c) 2014, microHAL
@@ -27,7 +27,9 @@
  *//* ========================================================================================================================== */
 
 #include "microhal.h"
+#include "diagnostic/TicToc.h"
 #include "hostComm/hostComm.h"
+
 #include "microhal_bsp.h"
 
 #include "ut_common.h"
@@ -39,11 +41,13 @@
 
 
 using namespace microhal;
+using namespace diagnostic;
 using namespace std::chrono_literals;
 
-TEST_CASE ("Ping Pong check") {
+TEST_CASE ("Ping Pong response time") {
 	//create hostComm device
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
+	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
 
 	INFO ( "Starting timeProc thread.");
 
@@ -51,26 +55,27 @@ TEST_CASE ("Ping Pong check") {
 
 	//create and run hostComm proc task
 	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-
-
-	INFO ( "Sending ping packets.");
-	CHECK (hostCommA.ping(false));
-	//these should be failure
-	CHECK_FALSE (hostCommA.ping(true));
-
-	communicationPortB.clear();
-	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
-	//create and run second hostComm proc task
 	std::thread hostCommThreadB(procThread, &hostCommB, &run);
 
-	CHECK (hostCommA.ping(true));
+	INFO ( "Sending ping.");
 
-	CHECK (hostCommA.ping(false));
+	constexpr int reapeat = 10;
+	std::chrono::microseconds responseTime[reapeat];
 
-	CHECK (hostCommA.ping(false));
+	diagnostic::TicToc duration;
+	duration.callibrate();
 
-	CHECK (hostCommA.ping(true));
+	for(uint8_t i=0; i<reapeat; i++) {
+		duration.tic();
+		CHECK (hostCommA.ping(true));
+		duration.toc();
 
+		responseTime[i] = duration.getDuration();
+	}
+
+	for (const std::chrono::microseconds &response : responseTime) {
+		diagChannel << lock << diagnostic::Informational << "Ping response time = " << response.count() << "us" << endl << unlock;
+	}
 	// close hostComm proc thread
 	run = false;
 	hostCommThreadA.join();
