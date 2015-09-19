@@ -12,34 +12,31 @@ namespace microhal {
 using namespace diagnostic;
 using namespace std::chrono_literals;
 
-HostCommPacket HostComm::pingPacket(HostCommPacket::PING, false, false);
-HostCommPacket HostComm::pongPacket(HostCommPacket::PONG, false, false);
-//HostCommPacket_ACK HostComm::ACKpacket;
-
 bool HostComm::send(HostCommPacket &packet) {
-	std::lock_guard<std::mutex> lock(sendMutex);
+	std::lock_guard<std::mutex> lock_mutex(sendMutex);
 	//count up from 0 to 15
 	sentCounter = (sentCounter + 1) & 0x0F;
 	//
 	packet.setNumber(sentCounter);
 	packet.calculateCRC();
 
+	log << lock << INFORMATIONAL << "Sending packet, with type: " << packet.getType() << ", number: " << packet.getNumber() << endl << unlock;
 	if(sentPacktToIODevice(packet) == false){
-		log << DEBUG << "Unable to sent packet." << endl;
+		log << lock << DEBUG << "Unable to sent packet." << endl << unlock;
 		return false;
 	}
 
 	if (packet.requireACK()) {
 		//txPendingPacket = &packet;
 		for (uint16_t retransmission = 0; retransmission < maxRetransmissionTry; retransmission++) {
-			log << Informational << "Waiting for ACK...";
+			log << lock << INFORMATIONAL << "Waiting for ACK..." << unlock;
 			if (waitForACK(packet)) {
-				log << Informational << "OK" << endl;
+				log << lock << Informational << "ACK OK" << endl << unlock;
 				return true;
 			}
-			log << Informational << "Missing" << endl << "Retransmitting packet." << endl;
+			log << lock << Informational << "ACK Missing" << endl << "Retransmitting packet." << endl << unlock;
 			if(sentPacktToIODevice(packet) == false){
-				log << DEBUG << "Unable to sent packet." << endl;
+				log << lock << DEBUG << "Unable to sent packet." << endl << unlock;
 				return false;
 			}
 		}
@@ -62,14 +59,14 @@ bool HostComm::sentPacktToIODevice(HostCommPacket &packet) {
 }
 
 bool HostComm::ping(bool waitForResponse) {
-	std::lock_guard<std::mutex> guard(sendMutex);
+	//std::lock_guard<std::mutex> guard(sendMutex);
 
-	log << lock << Debug << "HostComm: Sending PING..." << unlock;
-	bool status = send(pingPacket);
+	log << lock << DEBUG << "HostComm: Sending PING..." << unlock;
+	const bool status = send(pingPacket);
 	if (status == true)
 		log << lock << Debug << "OK" << endl << unlock;
 		if(waitForResponse == true) {
-			log << lock << Debug  << "HostComm: Waiting for PONG..." << endl << unlock;
+			log << lock << DEBUG  << "HostComm: Waiting for PONG..." << endl << unlock;
 
 			if(ackSemaphore.wait(ackTimeout)) {
 				if (receivedPacket.getType() == HostCommPacket::PONG) {
@@ -80,7 +77,8 @@ bool HostComm::ping(bool waitForResponse) {
 					return false;
 				}
 			} else {
-				log << lock << Informational  << "Unable to receive PONG, semaphore timeout." << endl << unlock;
+				log << lock << INFORMATIONAL  << "Unable to receive PONG, semaphore timeout." << endl << unlock;
+				return false;
 			}
 	}
 	return status;
@@ -93,29 +91,23 @@ bool HostComm::waitForACK(HostCommPacket &packetToACK) {
 			return true;
 		}
 	} else {
-		log << Informational << "Unable to receive ACK, semaphore timeout." << endl;
+		log << lock << INFORMATIONAL << "Unable to receive ACK, semaphore timeout." << endl << unlock;
 	}
 	return false;
 }
 
 void HostComm::timeProc() {
-	static uint32_t i;
-	if(i++ == 500){
-		i = 0;
-		log << lock << Debug  << "HostComm: timeProc function was called 2000 times." << endl << unlock;
-	}
-
 	if (readPacket() == true) {
-		log << Debug << "HostComm: got packet." << endl;
+		log << lock << DEBUG << "HostComm: got packet." << endl << unlock;
 		if (receivedPacket.checkCRC() == true) {
 			// if need do send ack
 			if (receivedPacket.requireACK() == true) {
 				//send ack
 				ACKpacket.setPacketToACK(receivedPacket);
 				if (send(ACKpacket)) {
-					log << Debug << "HostComm: ACK sent" << endl;
+					log << lock << DEBUG << "HostComm: ACK sent" << endl << unlock;
 				} else {
-					log << Debug << "HostComm: unable to send ACK."	<< endl;
+					log << lock << DEBUG << "HostComm: unable to send ACK."	<< endl << unlock;
 				}
 			}
 
@@ -125,17 +117,16 @@ void HostComm::timeProc() {
 
 				switch (receivedPacket.getType()) {
 				case HostCommPacket::ACK: {
-					log << Debug << "HostComm: got ACK.";
-					//ackSemaphore.unlock();
+					log << lock << DEBUG << "HostComm: got ACK." << unlock;
 					ackSemaphore.give();
 				}
 					break;
 				case HostCommPacket::PING:
-					log << lock << Debug  << "HostComm: got PING. Sending PONG... " << unlock;
+					log << lock << DEBUG  << "HostComm: got PING. Sending PONG... " << unlock;
 					if (send(pongPacket) == false) {
-						log << Debug << "Error" << endl;
+						log << lock << Debug << "Error" << endl << unlock;
 					} else {
-						log << Debug << "Ok" << endl;
+						log << lock << Debug << "Ok" << endl << unlock;
 					}
 					break;
 
@@ -151,18 +142,19 @@ void HostComm::timeProc() {
 					incommingPacket.emit(receivedPacket);
 				}
 			} else {
-				log << Debug << "HostComm: discarding packet, was earlier processed." << endl;
+				log << lock << DEBUG << "HostComm: discarding packet, was earlier processed." << endl << unlock;
 			}
 		} else {
-			log << Debug << "HostComm: packet CRC error." << endl;
+			log << lock << DEBUG << "HostComm: packet CRC error." << endl << unlock;
 		}
 	}
 }
 
 bool HostComm::readPacket() {
-	static size_t dataToRead = 0;
-
 	const size_t bytesAvailable = ioDevice.getAvailableBytes();
+	if(bytesAvailable) {
+		log << lock << DEBUG << "Available bytes: " << bytesAvailable << endl << unlock;
+	}
 
 	//if receiving new packet
 	if (dataToRead == 0) {

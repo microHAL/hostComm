@@ -22,8 +22,12 @@ namespace microhal {
 
 class HostComm {
 public:
-	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
-			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
+//	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
+//			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
+//	}
+
+	HostComm(IODevice &ioDevice, IODevice &logDevice, const char* logHeader = "HostComm: ") :
+		ioDevice(ioDevice), log(logHeader, logDevice), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
 	}
 
 	bool send(HostCommPacket &packet);
@@ -56,8 +60,9 @@ private:
 	uint8_t sentCounter = 0; //this counter contain last number of sent frame. This counter is increased when sending new frame but now when retransmitting frame.
 	uint8_t receiveCounter = 0; //this counter contain last number of received frame, is used to detect receive of retransmitted frame.
 	uint8_t maxRetransmissionTry = 3;
+	size_t dataToRead = 0;
 	IODevice &ioDevice;
-	diagnostic::Diagnostic &log;
+	diagnostic::Diagnostic log;
 
 	struct {
 		uint32_t sentPacketCounter = 0;
@@ -68,10 +73,9 @@ private:
 	HostCommPacket receivedPacket;
 	HostCommPacket *txPendingPacket = nullptr;
 
-	//static packets
 	HostCommPacket_ACK ACKpacket;
-	static HostCommPacket pingPacket;
-	static HostCommPacket pongPacket;
+	HostCommPacket pingPacket = {HostCommPacket::PING, false};
+	HostCommPacket pongPacket = {HostCommPacket::PONG, false};
 
 	bool sentPacktToIODevice(HostCommPacket &packet);
 	bool waitForACK(HostCommPacket &packetToACK);

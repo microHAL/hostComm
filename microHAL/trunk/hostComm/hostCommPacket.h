@@ -11,7 +11,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <memory>
+#include <type_traits>
+
 #include "diagnostic/diagnostic.h"
+#include "CRC/crc32.h"
 
 namespace microhal {
 
@@ -56,8 +59,8 @@ public:
 		: dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo)	{
 	}
 
-	HostCommPacket(uint8_t type, bool needAck,	bool calculateCRC)
-		: HostCommPacket(nullptr, 0, type, needAck, calculateCRC) {
+	HostCommPacket(uint8_t type, bool needAck) noexcept
+		: HostCommPacket(nullptr, 0, type, needAck, false) {
 	}
 
 //	~HostCommPacket(){
@@ -120,15 +123,26 @@ private:
 		//if packet has crc data
 		if (packetInfo.control & CRC_CALCULATE) {
 			//check crc
-			return false;
+			return packetInfo.crc == calculateCRCforAllPacket();
 		}
 		return true;
 	}
 
 	void calculateCRC() {
 		if (packetInfo.control & CRC_CALCULATE) {
-			//todo calculate CRC
+			packetInfo.crc = calculateCRCforAllPacket();
 		}
+	}
+
+	uint32_t calculateCRCforPcketInfo() {
+		return crc32(&packetInfo, sizeof(packetInfo) - sizeof(packetInfo.crc));
+	}
+
+	uint32_t calculateCRCforAllPacket() {
+		assert(dataPtr != nullptr);
+		assert(packetInfo.size != 0);
+
+		return crc32(dataPtr, packetInfo.size, calculateCRCforPcketInfo());
 	}
 
 	friend class HostComm;
@@ -137,12 +151,16 @@ private:
 
 template <typename T, uint8_t packetType, class Allocator = std::allocator<T>>
 class HostCommDataPacket : public HostCommPacket {
+	static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
+//	static_assert(packetType != HostCommPacket::ACK, "These packet type is reserved for ACK packet."); // fixme
+	static_assert(packetType != HostCommPacket::DEVICE_INFO_REQUEST, "These packet type is reserved for Device info packet.");
+	static_assert(packetType != HostCommPacket::PING, "These packet type is reserved for PING packet.");
+	static_assert(packetType != HostCommPacket::PONG, "These packet type is reserved for PONG packet.");
 public:
 	static constexpr uint8_t PacketType = packetType;
 
 	HostCommDataPacket(bool needAck = false, bool calculateCRC = false)
 		: HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC){
-		//todo add static assert to check if packet type is different than predefined packet types for example PING
 	}
 
 	~HostCommDataPacket(){

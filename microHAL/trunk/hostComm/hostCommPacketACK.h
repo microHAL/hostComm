@@ -17,7 +17,7 @@ namespace microhal {
 
 class HostCommPacket_ACK : public HostCommDataPacket < HostCommPacket::PacketInfo, HostCommPacket::ACK> {
 public:
-	void setPacketToACK(HostCommPacket &packet){
+	void setPacketToACK(HostCommPacket &packet) noexcept {
 		payload() = packet.packetInfo;
 	}
 
@@ -27,20 +27,12 @@ public:
 		return true;
 	}
 
-	void log() const noexcept {
-		HostCommPacket::PacketInfo *ACKinfo = payloadPtr();
-		diagnostic::diagChannel << diagnostic::Debug << "control: " << ACKinfo->control << diagnostic::endl
+	void log(diagnostic::Diagnostic &log = diagnostic::diagChannel) const noexcept {
+		const HostCommPacket::PacketInfo *ACKinfo = payloadPtr();
+		log << diagnostic::Debug << "control: " << ACKinfo->control << diagnostic::endl
 								<< "type: " << ACKinfo->type << diagnostic::endl
 								<< "size: " << ACKinfo->size << diagnostic::endl;
 	}
-
-//	HostCommPacket_ACK() {
-//	}
-//	~HostCommPacket_ACK() {
-//
-//	}
-private:
-
 };
 
 } // namespace microhal
