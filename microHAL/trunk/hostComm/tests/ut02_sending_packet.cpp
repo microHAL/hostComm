@@ -49,6 +49,10 @@ static void proceedPacket(HostCommPacket &packet) {
 }
 
 TEST_CASE ("Packet sending", "[packet sending]") {
+	//clear communicationPorts
+	communicationPortA.clear();
+	communicationPortB.clear();
+
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
 

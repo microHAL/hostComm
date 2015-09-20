@@ -42,6 +42,9 @@ using namespace microhal;
 using namespace std::chrono_literals;
 
 TEST_CASE ("Ping Pong check") {
+	//clear communicationPorts
+	communicationPortA.clear();
+	communicationPortB.clear();
 	//create hostComm device
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
 

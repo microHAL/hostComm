@@ -30,11 +30,15 @@ public:
 		NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40
 	};
 
+	static constexpr size_t maxPacketDataSize = 500;
+
 	struct __attribute__((packed)) PacketInfo  {
+		uint8_t longOne; // set to 0xFF
 		uint8_t control; //
 		uint8_t type; //msb is ack indication
+		uint8_t reserved; // reserved for future usage, set to 0x00
 		uint16_t size;
-		uint32_t crc;
+		uint32_t crc; // fixme maybe crc16
 
 		bool operator !=(const PacketInfo &packetInfo) const {
 			if(control != packetInfo.control) return true;
@@ -94,8 +98,10 @@ protected:
 		}
 
 		//set up packet
+		packetInfo.longOne = 0xFF;
 		packetInfo.control = control;
 		packetInfo.type = type;
+		packetInfo.reserved = 0x00;
 		packetInfo.size = dataSize;
 	}
 private:
@@ -123,7 +129,12 @@ private:
 		//if packet has crc data
 		if (packetInfo.control & CRC_CALCULATE) {
 			//check crc
-			return packetInfo.crc == calculateCRCforAllPacket();
+			if (packetInfo.size == 0) {
+				// these is unexpected situation, is CRC_CALCULATE bit is set then packetInfo.size should be greater than 0
+				return false;
+			} else {
+				return packetInfo.crc == calculateCRCforAllPacket();
+			}
 		}
 		return true;
 	}
@@ -156,6 +167,7 @@ class HostCommDataPacket : public HostCommPacket {
 	static_assert(packetType != HostCommPacket::DEVICE_INFO_REQUEST, "These packet type is reserved for Device info packet.");
 	static_assert(packetType != HostCommPacket::PING, "These packet type is reserved for PING packet.");
 	static_assert(packetType != HostCommPacket::PONG, "These packet type is reserved for PONG packet.");
+	static_assert(sizeof(T) <= HostCommPacket::maxPacketDataSize, "Size of these packet is too big. Maximum packet size is defined in HostComm::maxPacketDataSize.");
 public:
 	static constexpr uint8_t PacketType = packetType;
 

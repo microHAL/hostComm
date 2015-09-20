@@ -69,7 +69,7 @@ private:
 		uint32_t receivedPacketCounter = 0;
 	} statistics;
 
-	uint8_t packetBuffer[200];
+	uint8_t packetBuffer[HostCommPacket::maxPacketDataSize + sizeof(HostCommPacket::PacketInfo)];
 	HostCommPacket receivedPacket;
 	HostCommPacket *txPendingPacket = nullptr;
 
@@ -79,8 +79,8 @@ private:
 
 	bool sentPacktToIODevice(HostCommPacket &packet);
 	bool waitForACK(HostCommPacket &packetToACK);
-
 	bool readPacket();
+	bool readPacketInfo();
 };
 
 } // namespace microhal

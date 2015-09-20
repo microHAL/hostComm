@@ -20,7 +20,8 @@ bool HostComm::send(HostCommPacket &packet) {
 	packet.setNumber(sentCounter);
 	packet.calculateCRC();
 
-	log << lock << INFORMATIONAL << "Sending packet, with type: " << packet.getType() << ", number: " << packet.getNumber() << endl << unlock;
+	log << lock << INFORMATIONAL << "Sending packet, with type: " << packet.getType() << ", number: " << packet.getNumber() << ", data size: "
+			<< packet.getSize() << endl << unlock;
 	if(sentPacktToIODevice(packet) == false){
 		log << lock << DEBUG << "Unable to sent packet." << endl << unlock;
 		return false;
@@ -98,7 +99,7 @@ bool HostComm::waitForACK(HostCommPacket &packetToACK) {
 
 void HostComm::timeProc() {
 	if (readPacket() == true) {
-		log << lock << DEBUG << "HostComm: got packet." << endl << unlock;
+		log << lock << DEBUG << "HostComm: got packet, type: " << receivedPacket.getType() << ", size: " << receivedPacket.getSize() << endl << unlock;
 		if (receivedPacket.checkCRC() == true) {
 			// if need do send ack
 			if (receivedPacket.requireACK() == true) {
@@ -150,26 +151,67 @@ void HostComm::timeProc() {
 	}
 }
 
-bool HostComm::readPacket() {
-	const size_t bytesAvailable = ioDevice.getAvailableBytes();
-	if(bytesAvailable) {
-		log << lock << DEBUG << "Available bytes: " << bytesAvailable << endl << unlock;
+inline bool HostComm::readPacketInfo() {
+	uint_fast8_t repeat = 100;
+	while (repeat--) {
+		// find 0xFF in received data
+		const size_t bytesAvailable = ioDevice.getAvailableBytes();
+
+		if (bytesAvailable >= sizeof(HostCommPacket::PacketInfo)) {
+			//read packet start byte (longOne)
+			uint8_t longOne;
+			ioDevice.getChar(reinterpret_cast<char&>(longOne));
+
+			if (longOne != 0xFF) {
+				// some error situation, packet info longOne pool is different than 0xFF
+				log << lock << CRITICAL << "Packet info longOne: " << longOne << ", but should be equal 0xFF." << endl << unlock;
+				continue;
+			} else {
+				// found packet begin, set it to packetInfo structure
+				receivedPacket.packetInfo.longOne = 0xFF;
+				// read rest of packetInfo structure
+				ioDevice.read(reinterpret_cast<char*>(&receivedPacket.packetInfo.control), sizeof(HostCommPacket::PacketInfo) - sizeof(HostCommPacket::PacketInfo::longOne));
+
+				//ok, now check packet size
+				if (receivedPacket.getSize() <= HostCommPacket::maxPacketDataSize) {
+					// read all available data
+					uint16_t toRead = receivedPacket.getSize();
+					toRead -= ioDevice.read(receivedPacket.getDataPtr<char>(), toRead);
+
+					//if all packet was received
+					if (toRead == 0) {
+						dataToRead = 0;
+						return true;
+					} else {
+						dataToRead = toRead;
+						return false;
+					}
+				} else {
+					log << lock << CRITICAL << "Packet data size to large: " << receivedPacket.getSize() << ", max payload size is: "
+							<< HostCommPacket::maxPacketDataSize << endl << unlock;
+					continue;
+				}
+			}
+		} else {
+			dataToRead = 0;
+			return false;
+		}
 	}
+
+	return false;
+}
+
+bool HostComm::readPacket() {
+//	const size_t bytesAvailable = ioDevice.getAvailableBytes();
+//	if(bytesAvailable) {
+//		log << lock << DEBUG << "Available bytes: " << bytesAvailable << endl << unlock;
+//	}
 
 	//if receiving new packet
 	if (dataToRead == 0) {
-		if (bytesAvailable >= sizeof(HostCommPacket::PacketInfo)) {
-			ioDevice.read(reinterpret_cast<char*>(&receivedPacket.packetInfo), sizeof(HostCommPacket::PacketInfo));
-
-			dataToRead = receivedPacket.getSize();
-			dataToRead -= ioDevice.read(receivedPacket.getDataPtr<char>(), dataToRead);
-
-			//if all packet was received
-			if (dataToRead == 0) {
-				return true;
-			}
-		}
+		return readPacketInfo();
 	} else {	//else finish receiving packet
+		const size_t bytesAvailable = ioDevice.getAvailableBytes();
 		if (bytesAvailable >= dataToRead) {
 			char * readPtr = receivedPacket.getDataPtr<char>();
 			readPtr += receivedPacket.getSize() - dataToRead;

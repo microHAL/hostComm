@@ -60,6 +60,9 @@ TEST_CASE ("Connection speed test") {
 		PacketType = 100
 	};
 
+	//clear communicationPorts
+	communicationPortA.clear();
+	communicationPortB.clear();
 	//create hostComm device
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
