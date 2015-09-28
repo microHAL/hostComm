@@ -2,10 +2,10 @@
  @license    BSD 3-Clause
  @copyright  microHAL
  @version    $Id$
- @brief      hostComm performance test, connection speed calculation time
+ @brief      hostComm unit test, ping pong test
 
  @authors    Pawel Okas
- created on: 19-09-2015
+ created on: 21-09-2015
  last modification: <DD-MM-YYYY>
 
  @copyright Copyright (c) 2014, microHAL
@@ -35,10 +35,7 @@
 #include "ut_common.h"
 #include "testPacket.h"
 
-#include <thread>
-
 #include "catch.hpp"
-
 
 using namespace microhal;
 using namespace diagnostic;
@@ -54,17 +51,16 @@ uint32_t calculateSpeed(size_t size, const std::chrono::duration<_Rep, _Period>&
 	return static_cast<uint32_t>(byteSpeed);
 }
 
-TEST_CASE ("Connection speed test") {
+TEST_CASE ("Connection with device speed test") {
 	enum {
 		PacketType = 100
 	};
 
 	//clear communicationPorts
 	communicationPortA.clear();
-	communicationPortB.clear();
+
 	//create hostComm device
-	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
-	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
+	HostComm hostCommA(communicationPortA, debugPort);
 
 	INFO ( "Starting timeProc thread.");
 
@@ -72,10 +68,8 @@ TEST_CASE ("Connection speed test") {
 
 	//create and run hostComm proc task
 	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-	std::thread hostCommThreadB(procThread, &hostCommB, &run);
 
 	REQUIRE(hostCommA.ping(true));
-	REQUIRE(hostCommB.ping(true));
 
 	constexpr int reapeat = 10;
 	std::chrono::microseconds responseTime[reapeat];
@@ -158,6 +152,6 @@ TEST_CASE ("Connection speed test") {
 	// close hostComm proc thread
 	run = false;
 	hostCommThreadA.join();
-	hostCommThreadB.join();
 }
+
 

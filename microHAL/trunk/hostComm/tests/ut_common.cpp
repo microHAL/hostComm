@@ -29,7 +29,6 @@
 #include "ut_common.h"
 
 #include <thread>
-#include <atomic>
 
 using namespace microhal;
 using namespace std::chrono_literals;

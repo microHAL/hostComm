@@ -45,7 +45,7 @@ public:
 private:
 	uint32_t counter;
 public:
-	uint32_t data[5];
+	uint8_t data[490];
 };
 
 
