@@ -45,9 +45,14 @@ using namespace diagnostic;
 using namespace std::chrono_literals;
 
 TEST_CASE ("Ping Pong response time") {
+
+	REQUIRE(communicationPortA.isOpen());
+	REQUIRE(communicationPortB.isOpen());
+
 	//clear communicationPorts
-	communicationPortA.clear();
-	communicationPortB.clear();
+	REQUIRE(communicationPortA.clear());
+	REQUIRE(communicationPortB.clear());
+
 	//create hostComm device
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");

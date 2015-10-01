@@ -59,9 +59,13 @@ TEST_CASE ("Connection speed test") {
 		PacketType = 100
 	};
 
+	REQUIRE(communicationPortA.isOpen());
+	REQUIRE(communicationPortB.isOpen());
+
 	//clear communicationPorts
-	communicationPortA.clear();
-	communicationPortB.clear();
+	REQUIRE(communicationPortA.clear());
+	REQUIRE(communicationPortB.clear());
+
 	//create hostComm device
 	HostComm hostCommA(communicationPortA, debugPort, "HostComm A: ");
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
