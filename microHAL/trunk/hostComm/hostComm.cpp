@@ -31,7 +31,6 @@
 namespace microhal {
 
 using namespace diagnostic;
-using namespace std::chrono_literals;
 
 bool HostComm::send(HostCommPacket &packet) {
 	std::lock_guard<std::mutex> lock_mutex(sendMutex);
@@ -240,6 +239,23 @@ bool HostComm::readPacket() {
 		}
 	}
 	return false;
+}
+
+void HostComm::startHostCommThread(void) {
+	runThread = true;
+	runningThread = std::thread(&HostComm::procThread, this);
+}
+void HostComm::stopHostCommThread(void) {
+	runThread = false;
+    if(runningThread.joinable()) {
+    	runningThread.join();
+    }
+}
+void HostComm::procThread(void) {
+	while(runThread){
+		std::this_thread::sleep_for(std::chrono::milliseconds{1});
+		timeProc();
+	}
 }
 
 } // namespace microhal

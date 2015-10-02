@@ -51,7 +51,7 @@ public:
 		NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40
 	};
 
-	static constexpr size_t maxPacketDataSize = 500;
+	static constexpr uint32_t maxPacketDataSize = 500;
 
 	struct __attribute__((packed)) PacketInfo  {
 		uint8_t longOne; // set to 0xFF
@@ -130,7 +130,7 @@ private:
 	void *dataPtr = nullptr;
 	PacketInfo packetInfo;
 
-	bool setNumber(uint_fast8_t number) {
+	bool setNumber(uint8_t number) {
 		if (number > 0x0F) {
 			return false;
 		}
@@ -138,7 +138,7 @@ private:
 		return true;
 	}
 
-	uint_fast8_t getNumber() {
+	uint8_t getNumber() {
 		return packetInfo.control & 0x0F;
 	}
 

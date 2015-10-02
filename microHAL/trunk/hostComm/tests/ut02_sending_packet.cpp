@@ -67,10 +67,9 @@ TEST_CASE ("Packet sending", "[packet sending]") {
 
 	INFO ( "Starting timeProc thread.");
 
-	volatile bool run = true;
 	//create and run hostComm proc task
-	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-	std::thread hostCommThreadB (procThread, &hostCommB, &run);
+	hostCommA.startHostCommThread();
+	hostCommB.startHostCommThread();
 
 	INFO ( "Connecting incomming packet slot.");
 	//connect function that will be called when new packet will be received
@@ -140,7 +139,6 @@ TEST_CASE ("Packet sending", "[packet sending]") {
 	}
 
 	INFO ( "End of test, join proc thread.");
-	run = false;
-	hostCommThreadA.join();
-	hostCommThreadB.join();
+	hostCommA.stopHostCommThread();
+	hostCommB.stopHostCommThread();
 }

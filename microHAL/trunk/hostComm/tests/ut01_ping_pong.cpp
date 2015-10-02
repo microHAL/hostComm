@@ -55,21 +55,22 @@ TEST_CASE ("Ping Pong check") {
 
 	INFO ( "Starting timeProc thread.");
 
-	volatile bool run = true;
+//	volatile bool run = true;
+//
+//	//create and run hostComm proc task
+//	std::thread hostCommThreadA (procThread, &hostCommA, &run);
 
-	//create and run hostComm proc task
-	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-
+	hostCommA.startHostCommThread();
 
 	INFO ( "Sending ping packets.");
 	CHECK (hostCommA.ping(false));
 	//these should be failure
 	CHECK_FALSE (hostCommA.ping(true));
 
-	communicationPortB.clear();
+	REQUIRE(communicationPortB.clear());
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
 	//create and run second hostComm proc task
-	std::thread hostCommThreadB(procThread, &hostCommB, &run);
+	hostCommB.startHostCommThread();
 
 	CHECK (hostCommA.ping(true));
 
@@ -80,8 +81,7 @@ TEST_CASE ("Ping Pong check") {
 	CHECK (hostCommA.ping(true));
 
 	// close hostComm proc thread
-	run = false;
-	hostCommThreadA.join();
-	hostCommThreadB.join();
+	hostCommA.stopHostCommThread();
+	hostCommB.stopHostCommThread();
 }
 

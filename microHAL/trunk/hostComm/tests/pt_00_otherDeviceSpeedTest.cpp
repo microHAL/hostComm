@@ -67,10 +67,7 @@ TEST_CASE ("Connection with device speed test") {
 
 	INFO ( "Starting timeProc thread.");
 
-	volatile bool run = true;
-
-	//create and run hostComm proc task
-	std::thread hostCommThreadA (procThread, &hostCommA, &run);
+	hostCommA.startHostCommThread();
 
 	REQUIRE(hostCommA.ping(true));
 
@@ -153,8 +150,7 @@ TEST_CASE ("Connection with device speed test") {
 	}
 
 	// close hostComm proc thread
-	run = false;
-	hostCommThreadA.join();
+	hostCommA.stopHostCommThread();
 }
 
 

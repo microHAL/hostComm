@@ -58,12 +58,8 @@ TEST_CASE ("Ping Pong response time") {
 	HostComm hostCommB(communicationPortB, debugPort, "HostComm B: ");
 
 	INFO ( "Starting timeProc thread.");
-
-	volatile bool run = true;
-
-	//create and run hostComm proc task
-	std::thread hostCommThreadA (procThread, &hostCommA, &run);
-	std::thread hostCommThreadB(procThread, &hostCommB, &run);
+	hostCommA.startHostCommThread();
+	hostCommB.startHostCommThread();
 
 	INFO ( "Sending ping.");
 
@@ -85,8 +81,7 @@ TEST_CASE ("Ping Pong response time") {
 		diagChannel << lock << diagnostic::Informational << "Ping response time = " << response.count() << "us" << endl << unlock;
 	}
 	// close hostComm proc thread
-	run = false;
-	hostCommThreadA.join();
-	hostCommThreadB.join();
+	hostCommA.stopHostCommThread();
+	hostCommB.stopHostCommThread();
 }
 

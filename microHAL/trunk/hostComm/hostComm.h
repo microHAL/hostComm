@@ -40,7 +40,8 @@
 
 #include <cstdint>
 #include <mutex>
-
+#include <thread>
+#include <atomic>
 namespace microhal {
 
 class HostComm {
@@ -51,9 +52,12 @@ public:
 //	}
 
 	HostComm(IODevice &ioDevice, IODevice &logDevice, const char* logHeader = "HostComm: ") :
-		ioDevice(ioDevice), log(logHeader, logDevice), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
+		ioDevice(ioDevice), log(logHeader, logDevice), receivedPacket(packetBuffer, sizeof(packetBuffer)),
+		runThread(false), runningThread() {
 	}
-
+	~HostComm() {
+		stopHostCommThread();
+	}
 	bool send(HostCommPacket &packet);
 
 	void timeProc();
@@ -73,9 +77,13 @@ public:
 
 	bool getPendingPacket(HostCommPacket *packet) {
 		packet = &receivedPacket;
+		return true;
 	}
 
 	Signal<HostCommPacket &> incommingPacket;
+
+	void startHostCommThread(void);
+	void stopHostCommThread(void);
 private:
 	semaphore ackSemaphore;
 
@@ -107,6 +115,11 @@ private:
 	bool waitForACK(HostCommPacket &packetToACK);
 	bool readPacket();
 	bool readPacketInfo();
+
+	std::atomic<bool> runThread;
+	std::thread runningThread;
+
+	void procThread(void);
 };
 
 } // namespace microhal
