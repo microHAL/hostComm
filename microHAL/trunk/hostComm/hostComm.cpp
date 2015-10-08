@@ -31,6 +31,7 @@
 namespace microhal {
 
 using namespace diagnostic;
+using namespace std::chrono_literals;
 
 bool HostComm::send(HostCommPacket &packet) {
 	std::lock_guard<std::mutex> lock_mutex(sendMutex);
@@ -40,10 +41,10 @@ bool HostComm::send(HostCommPacket &packet) {
 	packet.setNumber(sentCounter);
 	packet.calculateCRC();
 
-	log << lock << INFORMATIONAL << "Sending packet, with type: " << packet.getType() << ", number: " << packet.getNumber() << ", data size: "
+	log << lock << INFORMATIONAL << "Sending packet, with type: " << (uint32_t)packet.getType() << ", number: " << (uint32_t)packet.getNumber() << ", data size: "
 			<< packet.getSize() << endl << unlock;
 	if(sentPacktToIODevice(packet) == false){
-		log << lock << DEBUG << "Unable to sent packet." << endl << unlock;
+        log << lock << WARNING << "Unable to sent packet." << endl << unlock;
 		return false;
 	}
 
@@ -57,7 +58,7 @@ bool HostComm::send(HostCommPacket &packet) {
 			}
 			log << lock << Informational << "ACK Missing" << endl << "Retransmitting packet." << endl << unlock;
 			if(sentPacktToIODevice(packet) == false){
-				log << lock << DEBUG << "Unable to sent packet." << endl << unlock;
+                log << lock << WARNING << "Unable to sent packet." << endl << unlock;
 				return false;
 			}
 		}
@@ -82,19 +83,19 @@ bool HostComm::sentPacktToIODevice(HostCommPacket &packet) {
 bool HostComm::ping(bool waitForResponse) {
 	//std::lock_guard<std::mutex> guard(sendMutex);
 
-	log << lock << DEBUG << "HostComm: Sending PING..." << unlock;
+    log << lock << INFORMATIONAL << "HostComm: Sending PING..." << unlock;
 	const bool status = send(pingPacket);
 	if (status == true)
-		log << lock << Debug << "OK" << endl << unlock;
+        log << lock << Informational << "OK" << endl << unlock;
 		if(waitForResponse == true) {
-			log << lock << DEBUG  << "HostComm: Waiting for PONG..." << endl << unlock;
+            log << lock << INFORMATIONAL  << "HostComm: Waiting for PONG..." << endl << unlock;
 
 			if(ackSemaphore.wait(ackTimeout)) {
 				if (receivedPacket.getType() == HostCommPacket::PONG) {
-					log << lock << Debug << "OK" << endl << unlock;
+                    log << lock << Informational << "OK" << endl << unlock;
 					return true;
 				} else {
-					log << lock << Debug << "ERROR" << endl << unlock;
+                    log << lock << Informational << "ERROR" << endl << unlock;
 					return false;
 				}
 			} else {
@@ -119,16 +120,16 @@ bool HostComm::waitForACK(HostCommPacket &packetToACK) {
 
 void HostComm::timeProc() {
 	if (readPacket() == true) {
-		log << lock << DEBUG << "HostComm: got packet, type: " << receivedPacket.getType() << ", size: " << receivedPacket.getSize() << endl << unlock;
+        log << lock << INFORMATIONAL << "HostComm: got packet, type: " << receivedPacket.getType() << ", size: " << receivedPacket.getSize() << endl << unlock;
 		if (receivedPacket.checkCRC() == true) {
 			// if need do send ack
 			if (receivedPacket.requireACK() == true) {
 				//send ack
 				ACKpacket.setPacketToACK(receivedPacket);
 				if (send(ACKpacket)) {
-					log << lock << DEBUG << "HostComm: ACK sent" << endl << unlock;
+                    log << lock << INFORMATIONAL << "HostComm: ACK sent" << endl << unlock;
 				} else {
-					log << lock << DEBUG << "HostComm: unable to send ACK."	<< endl << unlock;
+                    log << lock << WARNING << "HostComm: unable to send ACK."	<< endl << unlock;
 				}
 			}
 
@@ -138,24 +139,25 @@ void HostComm::timeProc() {
 
 				switch (receivedPacket.getType()) {
 				case HostCommPacket::ACK: {
-					log << lock << DEBUG << "HostComm: got ACK." << unlock;
+                    log << lock << INFORMATIONAL << "HostComm: got ACK." << unlock;
 					ackSemaphore.give();
 				}
 					break;
 				case HostCommPacket::PING:
-					log << lock << DEBUG  << "HostComm: got PING. Sending PONG... " << unlock;
+                    log << lock << INFORMATIONAL  << "HostComm: got PING. Sending PONG... " << unlock;
 					if (send(pongPacket) == false) {
-						log << lock << Debug << "Error" << endl << unlock;
+                        log << lock << Informational << "Error" << endl << unlock;
 					} else {
-						log << lock << Debug << "Ok" << endl << unlock;
+                        log << lock << Informational << "Ok" << endl << unlock;
 					}
 					break;
 
 				case HostCommPacket::PONG:
-					log << lock << Debug  << "HostComm: got PONG." << endl << unlock;
+                    log << lock << INFORMATIONAL  << "HostComm: got PONG." << endl << unlock;
 					ackSemaphore.give();
 					break;
 				case HostCommPacket::DEVICE_INFO_REQUEST:
+                    log << lock << INFORMATIONAL  << "HostComm: got DeviceInfoPacket Request, unimplementde." << endl << unlock;
 					break;
 
 				default:
@@ -163,21 +165,21 @@ void HostComm::timeProc() {
 					incommingPacket.emit(receivedPacket);
 				}
 			} else {
-				log << lock << DEBUG << "HostComm: discarding packet, was earlier processed." << endl << unlock;
+                log << lock << NOTICE << "HostComm: discarding packet, was earlier processed." << endl << unlock;
 			}
 		} else {
-			log << lock << DEBUG << "HostComm: packet CRC error." << endl << unlock;
+            log << lock << WARNING << "HostComm: packet CRC error." << endl << unlock;
 		}
 	}
 }
 
 inline bool HostComm::readPacketInfo() {
-	uint_fast8_t repeat = 100;
-	while (repeat--) {
+    uint_fast8_t repeat = 100;
+    while (repeat--) {
 		// find 0xFF in received data
-		const size_t bytesAvailable = ioDevice.getAvailableBytes();
+        const size_t bytesAvailable = ioDevice.getAvailableBytes();
 
-		if (bytesAvailable >= sizeof(HostCommPacket::PacketInfo)) {
+        if (bytesAvailable >= sizeof(HostCommPacket::PacketInfo)) {
 			//read packet start byte (longOne)
 			uint8_t longOne;
 			ioDevice.getChar(reinterpret_cast<char&>(longOne));
@@ -208,7 +210,7 @@ inline bool HostComm::readPacketInfo() {
 					}
 				} else {
 					log << lock << CRITICAL << "Packet data size to large: " << receivedPacket.getSize() << ", max payload size is: "
-							<< HostCommPacket::maxPacketDataSize << endl << unlock;
+							<< (uint32_t)HostCommPacket::maxPacketDataSize << endl << unlock;
 					continue;
 				}
 			}

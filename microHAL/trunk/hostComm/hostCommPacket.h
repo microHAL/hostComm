@@ -34,8 +34,9 @@
 #include <memory>
 #include <type_traits>
 
-#include "diagnostic/diagnostic.h"
 #include "CRC/crc32.h"
+#include "diagnostic/diagnostic.h"
+#include "utils/packed.h"
 
 namespace microhal {
 
@@ -51,9 +52,9 @@ public:
 		NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40
 	};
 
-	static constexpr uint32_t maxPacketDataSize = 500;
+	static constexpr uint32_t maxPacketDataSize = 2000;
 
-	struct __attribute__((packed)) PacketInfo  {
+    struct PacketInfo {
 		uint8_t longOne; // set to 0xFF
 		uint8_t control; //
 		uint8_t type; //msb is ack indication
@@ -78,7 +79,9 @@ public:
 
 			return true;
 		}
-	};
+    } MICROHAL_PACKED;
+
+    static_assert(sizeof(PacketInfo) == 10, "Some alignment problem, sizeof PacketInfo structure should be equal to 10. Check your compiler options.");
 
 	constexpr HostCommPacket(HostCommPacket && source) noexcept
 		: dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo)	{
@@ -183,12 +186,12 @@ private:
 
 template <typename T, uint8_t packetType, class Allocator = std::allocator<T>>
 class HostCommDataPacket : public HostCommPacket {
-	static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
+	//static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
 //	static_assert(packetType != HostCommPacket::ACK, "These packet type is reserved for ACK packet."); // fixme
 	static_assert(packetType != HostCommPacket::DEVICE_INFO_REQUEST, "These packet type is reserved for Device info packet.");
 	static_assert(packetType != HostCommPacket::PING, "These packet type is reserved for PING packet.");
 	static_assert(packetType != HostCommPacket::PONG, "These packet type is reserved for PONG packet.");
-//	static_assert(sizeof(T) <= HostCommPacket::maxPacketDataSize, "Size of these packet is too big. Maximum packet size is defined in HostComm::maxPacketDataSize.");
+	static_assert(sizeof(T) <= HostCommPacket::maxPacketDataSize, "Size of these packet is too big. Maximum packet size is defined in HostComm::maxPacketDataSize.");
 public:
 	static constexpr uint8_t PacketType = packetType;
 

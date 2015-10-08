@@ -75,7 +75,7 @@ public:
 	bool ping(bool waitForResponse);
 	bool isAvailablePacket();
 
-	bool getPendingPacket(HostCommPacket *packet) {
+    bool getPendingPacket(HostCommPacket *&packet) {
 		packet = &receivedPacket;
 		return true;
 	}
