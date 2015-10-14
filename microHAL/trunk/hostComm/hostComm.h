@@ -2,7 +2,7 @@
  @license    BSD 3-Clause
  @copyright  microHAL
  @version    $Id$
- @brief      hostComm unit test, ping pong test
+ @brief      hostComm class
 
  @authors    Pawel Okas
  created on: 13-06-2014
