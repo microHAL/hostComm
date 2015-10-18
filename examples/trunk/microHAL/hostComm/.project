@@ -28,7 +28,7 @@
 		<link>
 			<name>microHAL</name>
 			<type>2</type>
-			<locationURI>$%7BWORKSPACE_LOC%7D/microHAL</locationURI>
+			<locationURI>microHAL_DIR</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

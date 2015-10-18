@@ -3,14 +3,14 @@
 #=============================================================================#
 COMPONENTS = SerialPort Diagnostic
 
-VENDOR = STMICROELECTRONICS
-MCU_TYPE = STM32F4XX
+#VENDOR = STMICROELECTRONICS
+#MCU_TYPE = STM32F4XX
 
 PROGRAMMER = BOARD_EMBEDED
 
 DEVICES = 
 #BSP_BOARD = STM32F4-DISCOVERY
-MICRO_HAL_OS = FreeRTOS
+#MICRO_HAL_OS = FreeRTOS
 
 #=============================================================================#
 # diagnostics configuration

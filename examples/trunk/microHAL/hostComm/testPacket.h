@@ -33,7 +33,7 @@ public:
 	}
 
 	enum {
-		TestPacketRequest = 0x20
+		Request = 0x20
 	};
 };
 
