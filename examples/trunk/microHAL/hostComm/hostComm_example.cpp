@@ -57,13 +57,7 @@ void proceedPacket(HostCommPacket &packet) {
 }
 
 int main(){
-//	debugPort.clear();
-//
-//	debugPort.setDataBits(SerialPort::Data8);
-//	debugPort.setStopBits(SerialPort::OneStop);
-//	debugPort.setParity(SerialPort::NoParity);
-//	debugPort.setBaudRate(SerialPort::Baud115200, SerialPort::AllDirections);
-	debugPort.open(SerialPort::ReadWrite);
+	debugPort.open(IODevice::WriteOnly);
 
 	communicationPort.setDataBits(SerialPort::Data8);
 	communicationPort.setStopBits(SerialPort::OneStop);
