@@ -15,7 +15,10 @@ namespace microhal {
 
 class testData{
 public:
-	void log(diagnostic::Diagnostic &log = diagnostic::diagChannel);
+	template<diagnostic::LogLevel level = diagnostic::LogLevel::MICROHAL_DIAGNOSTIC_LOG_LEVEL>
+	void log(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel) {
+		log << diagnostic::lock << diagnostic::Debug <<  "counter value: " << counter << diagnostic::endl << diagnostic::unlock;
+	}
 
 	void setCounter(uint8_t cnt) { counter = cnt; }
 

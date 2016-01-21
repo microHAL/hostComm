@@ -10,8 +10,6 @@
 namespace microhal {
 using namespace diagnostic;
 
-void testData::log(diagnostic::Diagnostic &log){
-	log << lock << Debug <<  "counter value: " << counter << endl << unlock;
-}
+
 
 } // namespace microhal
