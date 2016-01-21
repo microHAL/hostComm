@@ -94,7 +94,7 @@ private:
 	uint8_t maxRetransmissionTry = 3;
 	size_t dataToRead = 0;
 	IODevice &ioDevice;
-	diagnostic::Diagnostic log;
+	diagnostic::Diagnostic<diagnostic::LogLevel::Debug> log;
 
 	struct {
 		uint32_t sentPacketCounter = 0;

@@ -48,7 +48,8 @@ public:
 		return true;
 	}
 
-	void log(diagnostic::Diagnostic &log = diagnostic::diagChannel) const noexcept {
+	template<diagnostic::LogLevel level>
+	void log(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel) const noexcept {
 		const HostCommPacket::PacketInfo *ACKinfo = payloadPtr();
 		log << diagnostic::Debug << "control: " << ACKinfo->control << diagnostic::endl
 								<< "type: " << ACKinfo->type << diagnostic::endl

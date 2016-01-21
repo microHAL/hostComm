@@ -108,7 +108,18 @@ public:
 		return static_cast<T*>(dataPtr);
 	}
 
-	void debug(diagnostic::Diagnostic &log = diagnostic::diagChannel);
+	template<diagnostic::LogLevel level>
+	void debug(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel){
+		log << diagnostic::lock << DEBUG << diagnostic::endl
+			<< "\tpacket type: " << packetInfo.type << diagnostic::endl
+			<< "\tdata size: " << packetInfo.size << diagnostic::endl
+			<< "\trequire ACK: " << requireACK() << diagnostic::endl
+			<< "\tdata ptr: " << diagnostic::toHex(reinterpret_cast<uint64_t>(dataPtr)) << diagnostic::endl;
+		if(packetInfo.size) {
+			log << diagnostic::Debug << "\tPacket data: " << diagnostic::toHex(getDataPtr<uint8_t>(), packetInfo.size) << diagnostic::endl;
+		}
+		log << diagnostic::unlock;
+	}
 protected:
 	HostCommPacket(void* dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
 			: dataSize(dataSize), dataPtr(dataPtr) {
