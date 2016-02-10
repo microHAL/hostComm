@@ -30,8 +30,8 @@
 
 namespace microhal {
 using namespace diagnostic;
-
-void testData::log(diagnostic::Diagnostic &log){
+template <diagnostic::LogLevel level>
+void testData::log(diagnostic::Diagnostic<level> &log){
 	log << lock << Debug <<  "counter value: " << counter << endl << unlock;
 }
 
