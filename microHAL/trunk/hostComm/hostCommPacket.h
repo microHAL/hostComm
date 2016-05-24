@@ -26,8 +26,8 @@
 
  *//* ========================================================================================================================== */
 
-#ifndef HOSTCOMEPACKET_H_
-#define HOSTCOMEPACKET_H_
+#ifndef _MICROHAL_HOSTCOMMPACKET_H_
+#define _MICROHAL_HOSTCOMMPACKET_H_
 
 #include <stdint.h>
 #include <stdio.h>
@@ -41,190 +41,194 @@
 namespace microhal {
 
 class HostCommPacket {
-public:
-	enum PacketOptions {
-		MAX_PACKET_SIZE = 128
-	};
-	enum PacketType {
-		ACK = 0x00, DEVICE_INFO = 0xFC, DEVICE_INFO_REQUEST = 0xFD, PING = 0xFE, PONG = 0xFF
-	};
-	enum PacketMode {
-		NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40
-	};
+ public:
+    enum PacketOptions {
+        MAX_PACKET_SIZE = 128
+    };
+    enum PacketType {
+        ACK = 0x00, DEVICE_INFO = 0xFC, DEVICE_INFO_REQUEST = 0xFD, PING = 0xFE, PONG = 0xFF
+    };
+    enum PacketMode {
+        NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40
+    };
 
-	static constexpr uint32_t maxPacketDataSize = 2000;
+    static constexpr uint32_t maxPacketDataSize = 2000;
 
     struct PacketInfo {
-		uint8_t longOne; // set to 0xFF
-		uint8_t control; //
-		uint8_t type; //msb is ack indication
-		uint8_t reserved; // reserved for future usage, set to 0x00
-		uint16_t size;
-		uint32_t crc; // fixme maybe crc16
+        uint8_t longOne;  // set to 0xFF
+        uint8_t control;  //
+        uint8_t type;  // msb is ack indication
+        uint8_t reserved;  // reserved for future usage, set to 0x00
+        uint16_t size;
+        uint32_t crc;  // fixme maybe crc16
 
-		bool operator !=(const PacketInfo &packetInfo) const {
-			if(control != packetInfo.control) return true;
-			if(type != packetInfo.type) return true;
-			if(size != packetInfo.size) return true;
-			if(crc != packetInfo.crc) return true;
+        bool operator !=(const PacketInfo &packetInfo) const {
+            if (control != packetInfo.control) return true;
+            if (type != packetInfo.type) return true;
+            if (size != packetInfo.size) return true;
+            if (crc != packetInfo.crc) return true;
 
-			return false;
-		}
+            return false;
+        }
 
-		bool operator ==(const PacketInfo &packetInfo) const {
-			if(control != packetInfo.control) return false;
-			if(type != packetInfo.type) return false;
-			if(size != packetInfo.size) return false;
-			if(crc != packetInfo.crc) return false;
+        bool operator ==(const PacketInfo &packetInfo) const {
+            if (control != packetInfo.control) return false;
+            if (type != packetInfo.type) return false;
+            if (size != packetInfo.size) return false;
+            if (crc != packetInfo.crc) return false;
 
-			return true;
-		}
+            return true;
+        }
     } MICROHAL_PACKED;
 
     static_assert(sizeof(PacketInfo) == 10, "Some alignment problem, sizeof PacketInfo structure should be equal to 10. Check your compiler options.");
 
-	constexpr HostCommPacket(HostCommPacket && source) noexcept
-		: dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo)	{
-	}
+    constexpr HostCommPacket(HostCommPacket && source) noexcept
+        : dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo)    {
+    }
 
-	HostCommPacket(uint8_t type, bool needAck) noexcept
-		: HostCommPacket(nullptr, 0, type, needAck, false) {
-	}
+    HostCommPacket(uint8_t type, bool needAck) noexcept
+        : HostCommPacket(nullptr, 0, type, needAck, false) {
+    }
 
-//	~HostCommPacket(){
+//    ~HostCommPacket(){
 //
-//	}
+//    }
 
-	uint16_t getSize() const {
-		return packetInfo.size;
-	}
+    uint16_t getSize() const {
+        return packetInfo.size;
+    }
 
-	uint16_t getType() const {
-		return packetInfo.type;
-	}
+    uint16_t getType() const {
+        return packetInfo.type;
+    }
 
-	template<typename T = void>
-	T *getDataPtr() const noexcept {
-		return static_cast<T*>(dataPtr);
-	}
+    template<typename T = void>
+    T *getDataPtr() const noexcept {
+        return static_cast<T*>(dataPtr);
+    }
 
-	template<diagnostic::LogLevel level>
-	void debug(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel){
-		log << diagnostic::lock << DEBUG << diagnostic::endl
-			<< "\tpacket type: " << packetInfo.type << diagnostic::endl
-			<< "\tdata size: " << packetInfo.size << diagnostic::endl
-			<< "\trequire ACK: " << requireACK() << diagnostic::endl
-			<< "\tdata ptr: " << diagnostic::toHex(reinterpret_cast<uint64_t>(dataPtr)) << diagnostic::endl;
-		if(packetInfo.size) {
-			log << diagnostic::Debug << "\tPacket data: " << diagnostic::toHex(getDataPtr<uint8_t>(), packetInfo.size) << diagnostic::endl;
-		}
-		log << diagnostic::unlock;
-	}
-protected:
-	HostCommPacket(void* dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
-			: dataSize(dataSize), dataPtr(dataPtr) {
-		uint8_t control = 0;
+    template<diagnostic::LogLevel level>
+    void debug(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel) {
+        log << diagnostic::lock << DEBUG << diagnostic::endl
+            << "\tpacket type: " << packetInfo.type << diagnostic::endl
+            << "\tdata size: " << packetInfo.size << diagnostic::endl
+            << "\trequire ACK: " << requireACK() << diagnostic::endl
+            << "\tdata ptr: " << diagnostic::toHex(reinterpret_cast<uint64_t>(dataPtr)) << diagnostic::endl;
+        if (packetInfo.size) {
+            log << diagnostic::Debug << "\tPacket data: " << diagnostic::toHex(getDataPtr<uint8_t>(), packetInfo.size) << diagnostic::endl;
+        }
+        log << diagnostic::unlock;
+    }
 
-		if (needAck) {
-			control = ACK_REQUEST;
-		}
-		if (calculateCRC) {
-			control |= CRC_CALCULATE;
-		}
+ protected:
+    HostCommPacket(void* dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
+            : dataSize(dataSize), dataPtr(dataPtr) {
+        uint8_t control = 0;
 
-		//set up packet
-		packetInfo.longOne = 0xFF;
-		packetInfo.control = control;
-		packetInfo.type = type;
-		packetInfo.reserved = 0x00;
-		packetInfo.size = dataSize;
-	}
-private:
-	size_t dataSize = 0;
-	void *dataPtr = nullptr;
-	PacketInfo packetInfo;
+        if (needAck) {
+            control = ACK_REQUEST;
+        }
+        if (calculateCRC) {
+            control |= CRC_CALCULATE;
+        }
 
-	bool setNumber(uint8_t number) {
-		if (number > 0x0F) {
-			return false;
-		}
-		packetInfo.control = (packetInfo.control & 0xF0) | number;
-		return true;
-	}
+        // set up packet
+        packetInfo.longOne = 0xFF;
+        packetInfo.control = control;
+        packetInfo.type = type;
+        packetInfo.reserved = 0x00;
+        packetInfo.size = dataSize;
+    }
 
-	uint8_t getNumber() {
-		return packetInfo.control & 0x0F;
-	}
+ private:
+    size_t dataSize = 0;
+    void *dataPtr = nullptr;
+    PacketInfo packetInfo;
 
-	bool requireACK() {
-		return packetInfo.control & ACK_REQUEST;
-	}
+    bool setNumber(uint8_t number) {
+        if (number > 0x0F) {
+            return false;
+        }
+        packetInfo.control = (packetInfo.control & 0xF0) | number;
+        return true;
+    }
 
-	bool checkCRC() {
-		//if packet has crc data
-		if (packetInfo.control & CRC_CALCULATE) {
-			//check crc
-			if (packetInfo.size == 0) {
-				// these is unexpected situation, is CRC_CALCULATE bit is set then packetInfo.size should be greater than 0
-				return false;
-			} else {
-				return packetInfo.crc == calculateCRCforAllPacket();
-			}
-		}
-		return true;
-	}
+    uint8_t getNumber() {
+        return packetInfo.control & 0x0F;
+    }
 
-	void calculateCRC() {
-		if (packetInfo.control & CRC_CALCULATE) {
-			packetInfo.crc = calculateCRCforAllPacket();
-		}
-	}
+    bool requireACK() {
+        return packetInfo.control & ACK_REQUEST;
+    }
 
-	uint32_t calculateCRCforPcketInfo() {
-		return crc32(&packetInfo, sizeof(packetInfo) - sizeof(packetInfo.crc));
-	}
+    bool checkCRC() {
+        // if packet has crc data
+        if (packetInfo.control & CRC_CALCULATE) {
+            // check crc
+            if (packetInfo.size == 0) {
+                // these is unexpected situation, is CRC_CALCULATE bit is set then packetInfo.size should be greater than 0
+                return false;
+            } else {
+                return packetInfo.crc == calculateCRCforAllPacket();
+            }
+        }
+        return true;
+    }
 
-	uint32_t calculateCRCforAllPacket() {
-		assert(dataPtr != nullptr);
-		assert(packetInfo.size != 0);
+    void calculateCRC() {
+        if (packetInfo.control & CRC_CALCULATE) {
+            packetInfo.crc = calculateCRCforAllPacket();
+        }
+    }
 
-		return crc32(dataPtr, packetInfo.size, calculateCRCforPcketInfo());
-	}
+    uint32_t calculateCRCforPcketInfo() {
+        return crc32(&packetInfo, sizeof(packetInfo) - sizeof(packetInfo.crc));
+    }
 
-	friend class HostComm;
-	friend class HostCommPacket_ACK;
+    uint32_t calculateCRCforAllPacket() {
+        assert(dataPtr != nullptr);
+        assert(packetInfo.size != 0);
+
+        return crc32(dataPtr, packetInfo.size, calculateCRCforPcketInfo());
+    }
+
+    friend class HostComm;
+    friend class HostCommPacket_ACK;
 };
 
 template <typename T, uint8_t packetType, class Allocator = std::allocator<T>>
 class HostCommDataPacket : public HostCommPacket {
-	//static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
-//	static_assert(packetType != HostCommPacket::ACK, "These packet type is reserved for ACK packet."); // fixme
-	static_assert(packetType != HostCommPacket::DEVICE_INFO_REQUEST, "These packet type is reserved for Device info packet.");
-	static_assert(packetType != HostCommPacket::PING, "These packet type is reserved for PING packet.");
-	static_assert(packetType != HostCommPacket::PONG, "These packet type is reserved for PONG packet.");
-	static_assert(sizeof(T) <= HostCommPacket::maxPacketDataSize, "Size of these packet is too big. Maximum packet size is defined in HostComm::maxPacketDataSize.");
-public:
-	static constexpr uint8_t PacketType = packetType;
+    //static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
+//    static_assert(packetType != HostCommPacket::ACK, "These packet type is reserved for ACK packet."); // fixme
+    static_assert(packetType != HostCommPacket::DEVICE_INFO_REQUEST, "These packet type is reserved for Device info packet.");
+    static_assert(packetType != HostCommPacket::PING, "These packet type is reserved for PING packet.");
+    static_assert(packetType != HostCommPacket::PONG, "These packet type is reserved for PONG packet.");
+    static_assert(sizeof(T) <= HostCommPacket::maxPacketDataSize, "Size of these packet is too big. Maximum packet size is defined in HostComm::maxPacketDataSize.");
 
-	HostCommDataPacket(bool needAck = false, bool calculateCRC = false)
-		: HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC){
-	}
+ public:
+    static constexpr uint8_t PacketType = packetType;
 
-	~HostCommDataPacket(){
-		allocator.deallocate(payloadPtr(), 1);
-	}
+    HostCommDataPacket(bool needAck = false, bool calculateCRC = false)
+        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC) {
+    }
 
-	T* payloadPtr() const {
-		return HostCommPacket::getDataPtr<T>();
-	}
+    ~HostCommDataPacket() {
+        allocator.deallocate(payloadPtr(), 1);
+    }
 
-	T& payload() const {
-		return *payloadPtr();
-	}
-private:
-	Allocator allocator;
+    T* payloadPtr() const {
+        return HostCommPacket::getDataPtr<T>();
+    }
+
+    T& payload() const {
+        return *payloadPtr();
+    }
+
+ private:
+    Allocator allocator;
 };
 
-} // namespace microhal
+}  // namespace microhal
 
-#endif // HOSTCOMEPACKET_H_
+#endif  // _MICROHAL_HOSTCOMMPACKET_H_
