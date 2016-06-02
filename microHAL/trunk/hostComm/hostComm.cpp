@@ -74,7 +74,6 @@ bool HostComm::sentPacktToIODevice(HostCommPacket &packet) {
         const size_t sizeToTransfer = packet.getSize() + sizeof(HostCommPacket::PacketInfo);
         if (ioDevice.write((char*)(&packet.packetInfo), sizeToTransfer) == sizeToTransfer) return true;
     } else {
-        log << lock << WARNING << "sending packet with two memory regions." << endl << unlock;
         if (ioDevice.write((char*)(&packet.packetInfo), sizeof(HostCommPacket::PacketInfo)) !=  sizeof(HostCommPacket::PacketInfo)) return false;
         if (ioDevice.write(packet.getDataPtr<char>(), packet.getSize()) == packet.getSize()) return true;
     }
