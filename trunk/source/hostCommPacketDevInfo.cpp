@@ -5,9 +5,6 @@
  *      Author: Pawel
  */
 
-#include <hostComm/hostCommPacketDevInfo.h>
+#include "hostCommPacketDevInfo.h"
 
-namespace microhal {
-
-
-} /* namespace microhal */
+namespace microhal {}  // namespace microhal
