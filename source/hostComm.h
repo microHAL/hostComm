@@ -85,7 +85,7 @@ public:
 	void startHostCommThread(void);
 	void stopHostCommThread(void);
 private:
-	semaphore ackSemaphore;
+	Semaphore ackSemaphore;
 
 	std::mutex sendMutex;
 	std::chrono::milliseconds ackTimeout = {std::chrono::milliseconds{1000}};
