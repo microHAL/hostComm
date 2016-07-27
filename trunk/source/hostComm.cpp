@@ -229,7 +229,7 @@ bool HostComm::readPacket() {
         return readPacketInfo();
     } else {    // else finish receiving packet
         const size_t bytesAvailable = ioDevice.getAvailableBytes();
-        if (bytesAvailable >= dataToRead) {
+        if (bytesAvailable >= dataToRead || bytesAvailable >= 100) {
             char * readPtr = receivedPacket.getDataPtr<char>();
             readPtr += receivedPacket.getSize() - dataToRead;
 
