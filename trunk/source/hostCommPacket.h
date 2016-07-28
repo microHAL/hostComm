@@ -34,7 +34,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "CRC/crc32.h"
+#include "crc/crc32.h"
 #include "diagnostic/diagnostic.h"
 #include "utils/packed.h"
 
