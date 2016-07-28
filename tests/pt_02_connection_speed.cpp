@@ -27,7 +27,7 @@
  *//* ========================================================================================================================== */
 
 #include "microhal.h"
-#include "diagnostic/TicToc.h"
+#include "diagnostic/ticToc.h"
 #include "hostComm/hostComm.h"
 
 #include "microhal_bsp.h"
