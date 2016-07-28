@@ -1,4 +1,12 @@
 eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MINGW_HOME/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MINGW_HOME/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MINGW_HOME/value=C\:\\microIDE\\toolchains\\mingw-w64\\5.3.0\\bin
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MSYS_HOME/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MSYS_HOME/operation=append
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/MICROIDE_MSYS_HOME/value=C\:\\microIDE\\tools\\msys
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/append=true
+environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717.1851548765/appendContributed=true
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717/MICROIDE_MINGW_HOME/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717/MICROIDE_MINGW_HOME/operation=replace
 environment/project/cdt.managedbuild.config.gnu.cross.exe.debug.746156717/MICROIDE_MINGW_HOME/value=C\:\\microIDE\\toolchains\\mingw-w64\\5.3.0\\bin
