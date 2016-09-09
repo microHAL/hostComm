@@ -1,4 +1,4 @@
-/* ========================================================================================================================== *//**
+/* ========================================================================================================================== */ /**
  @license    BSD 3-Clause
  @copyright  microHAL
  @version    $Id$
@@ -24,104 +24,104 @@
  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
- *//* ========================================================================================================================== */
+ */ /* ==========================================================================================================================
+                                                                                                                                                                                                                                                                                                                                                                                                             */
 
 #ifndef HOSTCOMM_H_
 #define HOSTCOMM_H_
 
-
 #include "../diagnostic/diagnostic.h"
+#include "IODevice.h"
 #include "hostCommPacket.h"
 #include "hostCommPacketACK.h"
 #include "hostCommPacketDevInfo.h"
-#include "IODevice.h"
-#include "signalSlot/signalSlot.h"
 #include "microhal_semaphore.h"
+#include "signalSlot/signalSlot.h"
 
+#include <atomic>
 #include <cstdint>
 #include <mutex>
 #include <thread>
-#include <atomic>
+
+#ifndef MICROHAL_HOSTCOMM_LOG_LEVEL
+#define MICROHAL_HOSTCOMM_LOG_LEVEL Warning
+#endif
+
 namespace microhal {
 
 class HostComm {
-public:
-	static constexpr uint8_t version = 1;
-//	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
-//			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
-//	}
+ public:
+    static constexpr uint8_t version = 1;
+    //	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
+    //			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
+    //	}
 
-	HostComm(IODevice &ioDevice, IODevice &logDevice, const char* logHeader = "HostComm: ") :
-		ioDevice(ioDevice), log(logHeader, logDevice), receivedPacket(packetBuffer, sizeof(packetBuffer)),
-		runThread(false), runningThread() {
-	}
-	~HostComm() {
-		stopHostCommThread();
-	}
-	bool send(HostCommPacket &packet);
+    HostComm(IODevice &ioDevice, IODevice &logDevice, const char *logHeader = "HostComm: ")
+        : ioDevice(ioDevice), log(logHeader, logDevice), receivedPacket(packetBuffer, sizeof(packetBuffer)), runThread(false), runningThread() {}
+    ~HostComm() { stopHostCommThread(); }
+    bool send(HostCommPacket &packet);
 
-	void timeProc();
+    void timeProc();
 
-	template<typename _Rep, typename _Period>
-	void setACKtimeout(const std::chrono::duration<_Rep, _Period>& timeout) {
-		ackTimeout = timeout;
-	}
+    template <typename _Rep, typename _Period>
+    void setACKtimeout(const std::chrono::duration<_Rep, _Period> &timeout) {
+        ackTimeout = timeout;
+    }
 
-	void setMaxRetransmissionCount(uint8_t retransmission) {
-		maxRetransmissionTry = retransmission;
-	}
+    void setMaxRetransmissionCount(uint8_t retransmission) { maxRetransmissionTry = retransmission; }
 
-
-	bool ping(bool waitForResponse);
-	bool isAvailablePacket();
+    bool ping(bool waitForResponse);
+    bool isAvailablePacket();
 
     bool getPendingPacket(HostCommPacket *&packet) {
-		packet = &receivedPacket;
-		return true;
-	}
+        packet = &receivedPacket;
+        return true;
+    }
 
-	Signal<HostCommPacket &> incommingPacket;
+    Signal<HostCommPacket &> incommingPacket;
 
-	void startHostCommThread(void);
-	void stopHostCommThread(void);
-private:
-	Semaphore ackSemaphore;
+    void startHostCommThread(void);
+    void stopHostCommThread(void);
 
-	std::mutex sendMutex;
-	std::chrono::milliseconds ackTimeout = {std::chrono::milliseconds{1000}};
-	uint8_t sentCounter = 0; //this counter contain last number of sent frame. This counter is increased when sending new frame but now when retransmitting frame.
-	uint8_t receiveCounter = 0; //this counter contain last number of received frame, is used to detect receive of retransmitted frame.
-	uint8_t maxRetransmissionTry = 3;
-	size_t dataToRead = 0;
-	IODevice &ioDevice;
-	diagnostic::Diagnostic<diagnostic::LogLevel::Debug> log;
+ private:
+    Semaphore ackSemaphore;
 
-	struct {
-		uint32_t sentPacketCounter = 0;
-		uint32_t receivedPacketCounter = 0;
-	} statistics;
+    std::mutex sendMutex;
+    std::chrono::milliseconds ackTimeout = {std::chrono::milliseconds{1000}};
+    uint8_t sentCounter =
+        0;  // this counter contain last number of sent frame. This counter is increased when sending new frame but now when retransmitting frame.
+    uint8_t receiveCounter = 0;  // this counter contain last number of received frame, is used to detect receive of retransmitted frame.
+    uint8_t maxRetransmissionTry = 3;
+    size_t dataToRead = 0;
+    IODevice &ioDevice;
+    diagnostic::Diagnostic<diagnostic::LogLevel::MICROHAL_HOSTCOMM_LOG_LEVEL> log;
 
-	uint8_t packetBuffer[HostCommPacket::maxPacketDataSize + sizeof(HostCommPacket::PacketInfo)];
-	HostCommPacket receivedPacket;
-	HostCommPacket *txPendingPacket = nullptr;
+    struct {
+        uint32_t sentPacketCounter = 0;
+        uint32_t receivedPacketCounter = 0;
+    } statistics;
 
-	HostCommPacket_ACK ACKpacket;
-	HostCommPacket pingPacket = {HostCommPacket::PING, false};
-	HostCommPacket pongPacket = {HostCommPacket::PONG, false};
+    uint8_t packetBuffer[HostCommPacket::maxPacketDataSize + sizeof(HostCommPacket::PacketInfo)];
+    HostCommPacket receivedPacket;
+    HostCommPacket *txPendingPacket = nullptr;
 
-//	DeviceInfoPacket &devInfo;
+    HostCommPacket_ACK ACKpacket;
+    HostCommPacket pingPacket = {HostCommPacket::PING, false};
+    HostCommPacket pongPacket = {HostCommPacket::PONG, false};
 
-	bool sentPacktToIODevice(HostCommPacket &packet);
-	bool waitForACK(HostCommPacket &packetToACK);
-	bool readPacket();
-	bool readPacketInfo();
+    //	DeviceInfoPacket &devInfo;
 
-	std::atomic<bool> runThread;
-	std::thread runningThread;
+    bool sentPacktToIODevice(HostCommPacket &packet);
+    bool waitForACK(HostCommPacket &packetToACK);
+    bool readPacket();
+    bool readPacketInfo();
 
-	void procThread(void);
+    std::atomic<bool> runThread;
+    std::thread runningThread;
+
+    void procThread(void);
 };
 
-} // namespace microhal
+}  // namespace microhal
 
 #endif /* HOSTCOMM_H_ */
