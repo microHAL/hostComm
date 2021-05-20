@@ -9,7 +9,7 @@
 #define TESTPACKET_H_
 
 #include "diagnostic/diagnostic.h"
-#include "hostComm/hostCommPacket.h"
+#include "hostCommPacket.h"
 
 namespace microhal {
 
@@ -23,6 +23,7 @@ public:
 	void setCounter(uint8_t cnt) { counter = cnt; }
 
 	uint8_t getCounter() { return counter; }
+
 private:
 	uint8_t counter;
 };
@@ -30,14 +31,10 @@ private:
 
 class testPacket : public HostCommDataPacket<testData, 0x21>{
 public:
-	testPacket() : HostCommDataPacket<testData, 0x21>::HostCommDataPacket(false, false) {
-	}
-	~testPacket(){
-	}
+    testPacket() : HostCommDataPacket<testData, 0x21>::HostCommDataPacket(false, false) {}
+    ~testPacket() {}
 
-	enum {
-		Request = 0x20
-	};
+    enum { Request = 0x20 };
 };
 
 } // namespace microhal

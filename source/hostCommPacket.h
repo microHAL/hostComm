@@ -39,6 +39,10 @@
 #include "diagnostic/diagnostic.h"
 #include "utils/packed.h"
 
+#ifndef MICROHAL_HOSTCOMM_MAXPACKETSIZE
+#define MICROHAL_HOSTCOMM_MAXPACKETSIZE 2000
+#endif
+
 namespace microhal {
 
 class HostCommPacket {
@@ -47,7 +51,7 @@ class HostCommPacket {
     enum PacketType { ACK = 0x00, DEVICE_INFO = 0xFC, DEVICE_INFO_REQUEST = 0xFD, PING = 0xFE, PONG = 0xFF };
     enum PacketMode { NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40 };
 
-    static constexpr uint32_t maxPacketDataSize = 2000;
+    static constexpr uint32_t maxPacketDataSize = MICROHAL_HOSTCOMM_MAXPACKETSIZE;
 
     // |--------------------------------------------------------------------------------------------------------------------------------------------|
     // |  Packet information structure                                                                                                              |
@@ -82,7 +86,7 @@ class HostCommPacket {
         uint16_t size;
         uint32_t crc;  // fixme maybe crc16
 
-        bool operator!=(const PacketInfo &packetInfo) const {
+        constexpr bool operator!=(const PacketInfo &packetInfo) const {
             if (control != packetInfo.control) return true;
             if (type != packetInfo.type) return true;
             if (size != packetInfo.size) return true;
@@ -91,7 +95,7 @@ class HostCommPacket {
             return false;
         }
 
-        bool operator==(const PacketInfo &packetInfo) const {
+        constexpr bool operator==(const PacketInfo &packetInfo) const {
             if (control != packetInfo.control) return false;
             if (type != packetInfo.type) return false;
             if (size != packetInfo.size) return false;
@@ -106,11 +110,9 @@ class HostCommPacket {
 
     constexpr HostCommPacket(HostCommPacket &&source) noexcept : dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo) {}
 
-    HostCommPacket(uint8_t type, bool needAck) noexcept : HostCommPacket(nullptr, 0, type, needAck, false) {}
+    constexpr HostCommPacket(uint8_t type, bool needAck) noexcept : HostCommPacket(nullptr, 0, type, needAck, false) {}
 
-    //    ~HostCommPacket(){
-    //
-    //    }
+    virtual ~HostCommPacket() {}
 
     uint16_t getSize() const { return packetInfo.size; }
 
@@ -123,7 +125,7 @@ class HostCommPacket {
 
     template <diagnostic::LogLevel level>
     void debug(diagnostic::Diagnostic<level> &log = diagnostic::diagChannel) {
-        log << diagnostic::lock << DEBUG << diagnostic::endl
+        log << diagnostic::lock << MICROHAL_DEBUG << diagnostic::endl
             << "\tpacket type: " << packetInfo.type << diagnostic::endl
             << "\tdata size: " << packetInfo.size << diagnostic::endl
             << "\trequire ACK: " << requireACK() << diagnostic::endl
@@ -135,8 +137,8 @@ class HostCommPacket {
     }
 
  protected:
-    HostCommPacket(void *dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
-        : dataSize(dataSize), dataPtr(dataPtr) {
+    constexpr HostCommPacket(void *dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
+        : dataSize(dataSize), dataPtr(dataPtr), packetInfo() {
         uint8_t control = 0;
 
         if (needAck) {
@@ -218,9 +220,10 @@ class HostCommDataPacket : public HostCommPacket {
     static constexpr uint8_t PacketType = packetType;
 
     explicit HostCommDataPacket(bool needAck = false, bool calculateCRC = false) noexcept
-        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC) {}
+        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC),
+          allocator() {}
 
-    ~HostCommDataPacket() { allocator.deallocate(payloadPtr(), 1); }
+    virtual ~HostCommDataPacket() { allocator.deallocate(payloadPtr(), 1); }
 
     T *payloadPtr() const { return HostCommPacket::getDataPtr<T>(); }
 

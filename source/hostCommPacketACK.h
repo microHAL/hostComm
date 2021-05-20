@@ -31,16 +31,14 @@
 
 #include <stdint.h>
 
+#include "diagnostic/diagnostic.h"
 #include "hostCommPacket.h"
-#include "../diagnostic/diagnostic.h"
 
 namespace microhal {
 
 class HostCommPacket_ACK : public HostCommDataPacket < HostCommPacket::PacketInfo, HostCommPacket::ACK> {
 public:
-	void setPacketToACK(HostCommPacket &packet) noexcept {
-		payload() = packet.packetInfo;
-	}
+    void setPacketToACK(HostCommPacket &packet) noexcept { payload() = packet.packetInfo; }
 
 	bool isAcknowledged(HostCommPacket &packet) const noexcept {
 		if(packet.packetInfo != payload()) return false;

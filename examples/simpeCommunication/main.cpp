@@ -26,8 +26,8 @@
 
  *//* ========================================================================================================================== */
 
+#include "hostComm.h"
 #include "microhal.h"
-#include "hostComm/hostComm.h"
 #include "microhal_bsp.h"
 
 #include "testPacket.h"
@@ -62,7 +62,7 @@ int main(){
 	communicationPort.setDataBits(SerialPort::Data8);
 	communicationPort.setStopBits(SerialPort::OneStop);
 	communicationPort.setParity(SerialPort::NoParity);
-	communicationPort.setBaudRate(SerialPort::Baud115200, SerialPort::AllDirections);
+    communicationPort.setBaudRate(SerialPort::Baud115200);
 	communicationPort.open(SerialPort::ReadWrite);
 
 	debugPort.write("\n\r------------------- HostComm example -------------------------\n\r");
