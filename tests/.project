@@ -26,12 +26,12 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src/doctest</name>
+			<name>src/third-party/doctest</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/third-party/doctest/doctest</locationURI>
 		</link>
 		<link>
-			<name>src/gsl</name>
+			<name>src/third-party/gsl</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/third-party/gsl</locationURI>
 		</link>
@@ -41,7 +41,7 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/source</locationURI>
 		</link>
 		<link>
-			<name>src/microhal</name>
+			<name>src/third-party/microhal</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/microhal</locationURI>
 		</link>
