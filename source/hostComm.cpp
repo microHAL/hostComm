@@ -194,7 +194,16 @@ void HostComm::timeProc() {
                         ackSemaphore.give();
                         break;
                     case HostCommPacket::DEVICE_INFO_REQUEST:
-                        log << lock << MICROHAL_INFORMATIONAL << "HostComm: got DeviceInfoPacket Request, unimplemented." << endl << unlock;
+                        log << lock << MICROHAL_INFORMATIONAL << "HostComm: got DeviceInfoPacket Request, sending device info." << endl << unlock;
+                        if (deviceInfo != nullptr) {
+                            if (send(*deviceInfo)) {
+                                log << lock << Informational << "OK" << endl << unlock;
+                            } else {
+                                log << lock << Informational << "Error" << endl << unlock;
+                            }
+                        } else {
+                            log << lock << MICROHAL_INFORMATIONAL << "Device info packet was not registered.";
+                        }
                         break;
 
                     default:

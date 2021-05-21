@@ -32,11 +32,12 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <cassert>
 #include <memory>
 #include <type_traits>
 
-#include "crc/crc32.h"
 #include "diagnostic/diagnostic.h"
+#include "microhal-crc.hpp"
 #include "utils/packed.h"
 
 #ifndef MICROHAL_HOSTCOMM_MAXPACKETSIZE
@@ -47,6 +48,8 @@ namespace microhal {
 
 class HostCommPacket {
  public:
+    using CRC = CRC32<>;
+
     enum PacketOptions { MAX_PACKET_SIZE = 128 };
     enum PacketType { ACK = 0x00, DEVICE_INFO = 0xFC, DEVICE_INFO_REQUEST = 0xFD, PING = 0xFE, PONG = 0xFF };
     enum PacketMode { NO_ACK = 0x00, NO_CRC = 0x00, ACK_REQUEST = 0x80, CRC_CALCULATE = 0x40 };
@@ -193,13 +196,16 @@ class HostCommPacket {
         }
     }
 
-    uint32_t calculateCRCforPcketInfo() { return crc32(&packetInfo, sizeof(packetInfo) - sizeof(packetInfo.crc)); }
+    uint32_t calculateCRCforPcketInfo() {
+        return CRC::calculate(reinterpret_cast<const uint8_t *>(&packetInfo), sizeof(packetInfo) - sizeof(packetInfo.crc));
+    }
 
     uint32_t calculateCRCforAllPacket() {
         assert(dataPtr != nullptr);
         assert(packetInfo.size != 0);
 
-        return crc32(dataPtr, packetInfo.size, calculateCRCforPcketInfo());
+        uint32_t remainder = CRC::calculatePartial(calculateCRCforPcketInfo(), static_cast<const uint8_t *>(dataPtr), packetInfo.size);
+        return CRC::finalize(remainder);
     }
 
     friend class HostComm;
@@ -220,8 +226,7 @@ class HostCommDataPacket : public HostCommPacket {
     static constexpr uint8_t PacketType = packetType;
 
     explicit HostCommDataPacket(bool needAck = false, bool calculateCRC = false) noexcept
-        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC),
-          allocator() {}
+        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC), allocator() {}
 
     virtual ~HostCommDataPacket() { allocator.deallocate(payloadPtr(), 1); }
 

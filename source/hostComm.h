@@ -52,9 +52,6 @@ namespace microhal {
 class HostComm {
  public:
     static constexpr uint8_t version = 1;
-    //	HostComm(IODevice &ioDevice, diagnostic::Diagnostic &log = diagnostic::diagChannel) :
-    //			ioDevice(ioDevice), log(log), receivedPacket(packetBuffer, sizeof(packetBuffer)) {
-    //	}
 
     HostComm(IODevice &ioDevice, IODevice &logDevice, const char *logHeader = "HostComm: ")
         : incommingPacket(),
@@ -87,16 +84,28 @@ class HostComm {
         return true;
     }
 
+    bool registerDeviceInfoPacket(DeviceInfoPacket *packet) {
+        if (deviceInfo == nullptr || packet == nullptr) {
+            deviceInfo = packet;
+            return true;
+        }
+        return false;
+    }
+
+    bool requestDeviceInfo() {
+        HostCommPacket deviceInfoRequest(DeviceInfoPacket::Request, false);
+        return send(deviceInfoRequest);
+    }
+
     Signal<HostCommPacket &> incommingPacket;
 
     void startHostCommThread(void);
     void stopHostCommThread(void);
 
  private:
-    os::Semaphore ackSemaphore;
-
-    std::mutex sendMutex;
     std::chrono::milliseconds ackTimeout = {std::chrono::milliseconds{1000}};
+    os::Semaphore ackSemaphore;
+    std::mutex sendMutex;
     uint8_t sentCounter =
         0;  // this counter contain last number of sent frame. This counter is increased when sending new frame but now when retransmitting frame.
     uint8_t receiveCounter = 0;  // this counter contain last number of received frame, is used to detect receive of retransmitted frame.
@@ -117,8 +126,7 @@ class HostComm {
     HostCommPacket_ACK ACKpacket;
     HostCommPacket pingPacket = {HostCommPacket::PING, false};
     HostCommPacket pongPacket = {HostCommPacket::PONG, false};
-
-    //	DeviceInfoPacket &devInfo;
+    HostCommPacket *deviceInfo = nullptr;
 
     bool sentPacktToIODevice(HostCommPacket &packet);
     bool waitForACK(HostCommPacket &packetToACK);
