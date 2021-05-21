@@ -28,6 +28,7 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  */
 
 #include "hostComm.h"
+#include "microhal_thread.h"
 
 namespace microhal {
 
@@ -139,6 +140,15 @@ bool HostComm::ping(bool waitForResponse) {
             }
         }
     }
+    return status;
+}
+
+bool HostComm::requestDeviceInfo() {
+    HostCommPacket deviceInfoRequestPacket(DeviceInfoPacket::Request, false);
+    log << lock << MICROHAL_INFORMATIONAL << "Sending Device info request..." << unlock;
+    const bool status = send(deviceInfoRequestPacket);
+    log << lock << Informational << (status ? "OK" : "Error") << endl << unlock;
+
     return status;
 }
 
@@ -294,7 +304,7 @@ bool HostComm::readPacket() {
 
 void HostComm::startHostCommThread(void) {
     runThread = true;
-    runningThread = std::thread(&HostComm::procThread, this);
+    runningThread = os::thread(1000, "hostComm", 4, &HostComm::procThread, this);
 }
 void HostComm::stopHostCommThread(void) {
     runThread = false;
@@ -304,7 +314,7 @@ void HostComm::stopHostCommThread(void) {
 }
 void HostComm::procThread(void) {
     while (runThread) {
-        std::this_thread::sleep_for(std::chrono::milliseconds{1});
+        std::this_thread::sleep_for(std::chrono::milliseconds{5});
         timeProc();
     }
 }

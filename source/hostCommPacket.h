@@ -111,11 +111,21 @@ class HostCommPacket {
     static_assert(sizeof(PacketInfo) == 10,
                   "Some alignment problem, sizeof PacketInfo structure should be equal to 10. Check your compiler options.");
 
-    constexpr HostCommPacket(HostCommPacket &&source) noexcept : dataSize(source.dataSize), dataPtr(source.dataPtr), packetInfo(source.packetInfo) {}
+    constexpr HostCommPacket(HostCommPacket &&source) noexcept : dataPtr(source.dataPtr), packetInfo(source.packetInfo), ownData(source.ownData) {
+        source.dataPtr = nullptr;
+    }
+    constexpr HostCommPacket(const HostCommPacket &source) : packetInfo(source.packetInfo) {
+        dataPtr = new uint8_t[packetInfo.size];
+        ownData = true;
+        std::copy_n((uint8_t *)source.dataPtr, packetInfo.size, (uint8_t *)dataPtr);
+    }
 
     constexpr HostCommPacket(uint8_t type, bool needAck) noexcept : HostCommPacket(nullptr, 0, type, needAck, false) {}
 
-    virtual ~HostCommPacket() {}
+    virtual ~HostCommPacket() {
+        if (ownData) delete[]((uint8_t *)dataPtr);
+        dataPtr = nullptr;
+    }
 
     uint16_t getSize() const { return packetInfo.size; }
 
@@ -141,7 +151,7 @@ class HostCommPacket {
 
  protected:
     constexpr HostCommPacket(void *dataPtr, size_t dataSize, uint8_t type = 0xFF, bool needAck = false, bool calculateCRC = false)
-        : dataSize(dataSize), dataPtr(dataPtr), packetInfo() {
+        : dataPtr(dataPtr), packetInfo() {
         uint8_t control = 0;
 
         if (needAck) {
@@ -158,11 +168,11 @@ class HostCommPacket {
         packetInfo.reserved = 0x00;
         packetInfo.size = dataSize;
     }
+    void *dataPtr = nullptr;
 
  private:
-    size_t dataSize = 0;
-    void *dataPtr = nullptr;
     PacketInfo packetInfo;
+    bool ownData = false;
 
     bool setNumber(uint8_t number) {
         if (number > 0x0F) {
@@ -212,7 +222,7 @@ class HostCommPacket {
     friend class HostCommPacket_ACK;
 };
 
-template <typename T, uint8_t packetType, class Allocator = std::allocator<T>>
+template <typename T, uint8_t packetType>
 class HostCommDataPacket : public HostCommPacket {
     // static_assert(std::is_trivial<T>::value, "payload (T parameter) must be POD."); //fixme is_pod
     //    static_assert(packetType != HostCommPacket::ACK, "These packet type is reserved for ACK packet."); // fixme
@@ -226,16 +236,16 @@ class HostCommDataPacket : public HostCommPacket {
     static constexpr uint8_t PacketType = packetType;
 
     explicit HostCommDataPacket(bool needAck = false, bool calculateCRC = false) noexcept
-        : HostCommPacket(allocator.allocate(1), sizeof(T), packetType, needAck, calculateCRC), allocator() {}
+        : HostCommPacket(new uint8_t[sizeof(T)], sizeof(T), packetType, needAck, calculateCRC) {}
 
-    virtual ~HostCommDataPacket() { allocator.deallocate(payloadPtr(), 1); }
+    //    virtual ~HostCommDataPacket() {
+    //        delete[]((uint8_t *)dataPtr);
+    //        dataPtr = nullptr;
+    //    }
 
     T *payloadPtr() const { return HostCommPacket::getDataPtr<T>(); }
 
     T &payload() const { return *payloadPtr(); }
-
- private:
-    Allocator allocator;
 };
 
 }  // namespace microhal

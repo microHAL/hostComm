@@ -53,7 +53,7 @@ class HostComm {
  public:
     static constexpr uint8_t version = 1;
 
-    HostComm(IODevice &ioDevice, IODevice &logDevice, const char *logHeader = "HostComm: ")
+    HostComm(IODevice &ioDevice, IODevice &logDevice, const char *logHeader = "HostComm")
         : incommingPacket(),
           ackSemaphore(),
           sendMutex(),
@@ -77,6 +77,7 @@ class HostComm {
     void setMaxRetransmissionCount(uint8_t retransmission) { maxRetransmissionTry = retransmission; }
 
     bool ping(bool waitForResponse);
+    bool requestDeviceInfo();
     bool isAvailablePacket();
 
     bool getPendingPacket(HostCommPacket *&packet) {
@@ -90,11 +91,6 @@ class HostComm {
             return true;
         }
         return false;
-    }
-
-    bool requestDeviceInfo() {
-        HostCommPacket deviceInfoRequest(DeviceInfoPacket::Request, false);
-        return send(deviceInfoRequest);
     }
 
     Signal<HostCommPacket &> incommingPacket;
